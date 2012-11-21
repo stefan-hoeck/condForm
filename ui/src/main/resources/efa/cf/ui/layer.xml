@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="CFormat">
+            <file name="org-efa-cformat-ui-actions-EditFormattingAction.instance"/>
+        </folder>    
+    </folder>
+    <folder name="Toolbars">
+        <folder name="ConditionalFormatting">
+            <attr name="position" intvalue="505"/>
+            <file name="EditFormattingAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/CFormat/org-efa-cformat-ui-actions-EditFormattingAction.instance"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="OptionsDialog">
+        <file name="org-efa-cformat-ui-tc-FormatOptionsPanelController.instance">
+            <attr methodvalue="org.netbeans.spi.options.OptionsCategory.createCategory" name="instanceCreate"/>
+            <attr name="controller" newvalue="org.efa.cformat.ui.tc.FormatOptionsPanelController"/>
+            <attr bundlevalue="org.efa.cformat.ui.tc.Bundle#OptionsCategory_Name_Format" name="categoryName"/>
+            <attr name="iconBase" stringvalue="org/efa/cformat/ui/tc/format32.png"/>
+            <attr bundlevalue="org.efa.cformat.ui.tc.Bundle#OptionsCategory_Keywords_Format" name="keywords"/>
+            <attr name="keywordsCategory" stringvalue="Format"/>
+            <attr name="position" intvalue="1000"/>
+        </file>
+    </folder>
+    <folder name="ContextActions">    
+        <folder name="BaseFormatNode">
+            <file name="NewAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-NewAction.instance"/>
+                <attr name="position" intvalue="50"/>
+            </file>
+            <file name="EditAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-EditAction.instance"/>
+                <attr name="position" intvalue="85"/>
+            </file>
+        </folder>
+        <folder name="SingleFormatNode">
+            <file name="EditAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-EditAction.instance"/>
+                <attr name="position" intvalue="85"/>
+            </file>
+            <file name="DeleteAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-DeleteAction.instance"/>
+                <attr name="position" intvalue="150"/>
+            </file>
+        </folder>
+    </folder>
+</filesystem>
