@@ -42,7 +42,8 @@ object FormatProps {
       ns.readTag[String]("name") apply FormatProps.apply
   }
 
-  implicit lazy val FormatPropsFormatted = fromProps[FormatProps](identity)
+  implicit lazy val FormatPropsFormatted =
+    formatted(Lens.self[FormatProps])(_.name)
   
   private lazy val transparent: Color = new Color(0, 0, 0, 0)
   private lazy val fore: Color = new Label().foreground

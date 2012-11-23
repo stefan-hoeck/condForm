@@ -1,5 +1,6 @@
 package efa.cf.format
 
+import efa.core.UniqueId
 import scalaz._, Scalaz._
 
 case class FullBase[A](
@@ -21,6 +22,10 @@ object FullBase {
   implicit def FullBaseLenses[A,B](l: Lens[A,FullBase[B]]) = new {
     lazy val baseFormat = l andThen FullBase.baseFormat
     lazy val templates = l andThen FullBase.templates
+  }
+
+  implicit def FullBaseUniqueId[A] = new UniqueId[FullBase[A],String] {
+    def id (a: FullBase[A]) = a.baseFormat.id
   }
   
 }

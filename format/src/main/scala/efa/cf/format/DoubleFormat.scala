@@ -23,6 +23,8 @@ object DoubleFormat {
 
   implicit lazy val DoubleFormatDefault = Default default default
 
+  implicit lazy val DoubleFormatFormatted = formatted(props)(_.props.name)
+
   implicit lazy val DoubleFormatEqual: Equal[DoubleFormat] =
     Equal.equalBy(f ⇒ (f.props, f.term, f.formatString))
 
@@ -43,8 +45,6 @@ object DoubleFormat {
       ns.readTag[Term[Double]]("term") ⊛
       ns.readTag[String]("fString") apply DoubleFormat.apply
   }
-
-  implicit lazy val DoubleFormatFormatted = fromProps[DoubleFormat](_.props)
   
   //Lenses
 

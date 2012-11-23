@@ -1,15 +1,10 @@
 package efa.cf.format
 
-import efa.core.UniqueId
-import java.awt.Color
-import scalaz.Show
+import scalaz.@>
 
-trait Formatted[A] extends UniqueId[A,String] with Show[A] {
-  def background (a: A): Color = formatProps(a).background
-  def foreground (a: A): Color = formatProps(a).foreground
-  def formatProps (a: A): FormatProps
-  def locName (a: A): String = formatProps(a).name
-  override def shows (a: A) = locName (a)
+trait Formatted[A] extends HasFormatProps[A] {
+  def formatPropsL: A @> FormatProps
+  def formatProps (a: A) = formatPropsL get a
 }
 
 object Formatted {

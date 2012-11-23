@@ -21,6 +21,8 @@ object StringFormat {
 
   implicit lazy val StringFormatDefault = Default default default
 
+  implicit lazy val StringFormatFormatted = formatted(props)(_.props.name)
+
   implicit lazy val StringFormatEqual: Equal[StringFormat] =
     Equal.equalBy(f ⇒ (f.props, f.regex))
 
@@ -38,8 +40,6 @@ object StringFormat {
       (ns.readTagV[String]("regex")(regexV)) apply
       StringFormat.apply
   }
-
-  implicit lazy val StringFormatFormatted = fromProps[StringFormat](_.props)
   
   //Lenses
   

@@ -31,17 +31,17 @@ package object format {
 
   private[format] implicit val ColorToXml: ToXml[Color] = ToXml.readShow
 
-  private[format] def fromProps[A](f: A ⇒ FormatProps): Formatted[A] =
-    new Formatted[A] {
-      def formatProps (a: A) = f(a)
-      def id (a: A) = formatProps(a).name
-    }
+  private[format] def formatted[A](l: A @> FormatProps)(i: A ⇒ String)
+  : Formatted[A] = new Formatted[A] {
+    def id (a: A) = i(a)
+    def formatPropsL = l
+  }
 
-    private[format] def propsName[A](f: A ⇒ FormatProps, n: A ⇒ String)
-    : Formatted[A] = new Formatted[A] {
-      def formatProps (a: A) = f(a)
-      def id (a: A) = n(a)
-    }
+  private[format] def propsName[A](f: A ⇒ FormatProps)(i: A ⇒ String)
+  : HasFormatProps[A] = new HasFormatProps[A] {
+    def formatProps (a: A) = f(a)
+    def id (a: A) = i(a)
+  }
 
   type BooleanBase = BaseFormat[BooleanFormat]
   type StringBase = BaseFormat[StringFormat]

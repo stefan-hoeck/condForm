@@ -13,7 +13,7 @@ class BaseFormatPanel[A] private (val bf: BaseFormat[A])
   val fStringC = textField(bf.fString)
     
   lazy val in: VSIn[BaseFormat[A]] = ^^^(
-    bf.name.η[VSIn],
+    bf.id.η[VSIn],
     ^^(fore.colorIn, back.colorIn, bf.props.name.η[VSIn])(FormatProps.apply),
     bf.formats.η[VSIn],
     stringIn(fStringC)

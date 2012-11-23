@@ -64,7 +64,7 @@ object Formats {
     _  ← storeMap(stringBase, pref, af.stringsM)
   } yield ()
 
-  private[format] def storeMap[A:ToXml:Formatted](
+  private[format] def storeMap[A:ToXml](
     label: String, pref: ValLogIO[Preferences], m: Map[String,A]
   ): IO[Unit] = logger logValZ (for {
       _  ← info("Persisting formattings for " + label)
@@ -87,14 +87,14 @@ object Formats {
     }
   }
 
-  private[this] def fromPrefs[A:ToXml:Formatted] (
+  private[this] def fromPrefs[A:ToXml:HasFormatProps] (
     label: String, p: Preferences
   ): ValRes[Map[String,A]] = {
     def load (i: Int): ValRes[A] =
       ToXml[A] fromXml (XML loadString p.get(itemLbl(label, i), ""))
 
     def loadPair (i: Int): ValRes[(String,A)] =
-      load(i) map (a ⇒ Formatted[A].id(a) → a)
+      load(i) map (a ⇒ HasFormatProps[A].id(a) → a)
 
     val i = p.getInt(countLbl(label), 0)
 

@@ -8,13 +8,13 @@ import scala.swing.Label
 import scalaz._, Scalaz._, scalacheck.ScalaCheckBinding._
 
 case class BaseFormat[A] (
-  name: String, props: FormatProps, formats: List[A], fString: String
+  id: String, props: FormatProps, formats: List[A], fString: String
 ) {
 
   def fullList (implicit N:Formatted[A]): List[FullFormat[A]] = {
     val names = formats map N.locName toSet
 
-    formats sortBy N.locName map (FullFormat(name, _, names, false))
+    formats sortBy N.locName map (FullFormat(id, _, names, false))
   }
    
 }
@@ -24,8 +24,10 @@ object BaseFormat {
   implicit def BaseFormatDefault[A] = Default default (
     BaseFormat[A](loc.base, !!!, Nil, ""))
 
+  implicit def BaseFormatFormatted[A] = formatted(props[A])(_.id)
+
   implicit def BaseFormatEqual[A:Equal]: Equal[BaseFormat[A]] =
-    Equal.equalBy(f ⇒ (f.name, f.props, f.formats, f.fString))
+    Equal.equalBy(f ⇒ (f.id, f.props, f.formats, f.fString))
 
   implicit def BaseFormatArbitrary[A:Arbitrary] = Arbitrary(
     Gen.identifier ⊛
@@ -39,7 +41,7 @@ object BaseFormat {
     private lazy val listToXml = ToXml.listToXml[A](lbl)
 
     def toXml (f: BaseFormat[A]) =
-      ("name" xml f.name) ++
+      ("name" xml f.id) ++
       (formatProps xml f.props) ++
       listToXml.toXml(f.formats) ++
       ("fString" xml f.fString)
@@ -50,14 +52,11 @@ object BaseFormat {
       listToXml.fromXml(ns) ⊛
       ns.readTag[String]("fString") apply BaseFormat.apply
   }
-
-  implicit def BaseFormatFormatted[A] =
-    propsName[BaseFormat[A]](_.props, _.name)
   
   //Lenses
 
-  def name[A]: BaseFormat[A] @> String =
-    Lens.lensu((a,b) ⇒ a copy (name = b), _.name)
+  def id[A]: BaseFormat[A] @> String =
+    Lens.lensu((a,b) ⇒ a copy (id = b), _.id)
 
   def props[A]: BaseFormat[A] @> FormatProps =
     Lens.lensu((a,b) ⇒ a copy (props = b), _.props)
@@ -69,7 +68,7 @@ object BaseFormat {
     Lens.lensu((a,b) ⇒ a copy (fString = b), _.fString)
   
   implicit def BaseFormatLenses[A,B](l: Lens[A,BaseFormat[B]]) = new {
-    lazy val name = l andThen BaseFormat.name
+    lazy val id = l andThen BaseFormat.id
     lazy val props = l andThen BaseFormat.props
     lazy val formats = l andThen BaseFormat.formats
     lazy val fString = l andThen BaseFormat.fString

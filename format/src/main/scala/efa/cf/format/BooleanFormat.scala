@@ -17,6 +17,8 @@ object BooleanFormat {
 
   implicit lazy val BooleanFormatDefault = Default default default
 
+  implicit lazy val BooleanFormatFormatted = formatted(props)(_.props.name)
+
   implicit lazy val BooleanFormatEqual: Equal[BooleanFormat] =
     Equal.equalBy(f ⇒ (f.props, f.value))
 
@@ -33,9 +35,6 @@ object BooleanFormat {
       ns.readTag[FormatProps](formatProps) ⊛
       ns.readTag[Boolean]("value") apply BooleanFormat.apply
   }
-
-  implicit lazy val BooleanFormatFormatted = 
-    fromProps[BooleanFormat](_.props)
   
   //Lenses
 

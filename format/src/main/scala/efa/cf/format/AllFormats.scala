@@ -19,16 +19,18 @@ case class AllFormats (
   import AllFormats._
 
   lazy val bluePrints = m2s(bluePrintsM) sortBy (_.name)
-  lazy val bools = bf2s(boolsM) sortBy (_.locName)
-  lazy val doubles = bf2s(doublesM) sortBy (_.locName)
-  lazy val strings = bf2s(stringsM) sortBy (_.locName)
+
   lazy val bluePrintsFF =
     bluePrints ∘ (FullFormat("", _, bluePrintsM.keySet, false))
 
+  def fpBluePrint: FullFormat[FormatProps] = FullFormat(
+    "", FormatProps.bluePrint, bluePrintsM.keySet, true
+  )
+
   private def m2s[A](m: Map[String,A]) = m.toList map (_._2)
   
-  private def bf2s[A](m: Map[String,BaseFormat[A]]) =
-    m.toList map (p ⇒ FullBase(p._2, bluePrints))
+  def fullBases[A](l: AllFormats @> Map[String,BaseFormat[A]]) =
+    (l get this).toList map (p ⇒ FullBase(p._2, bluePrints))
 }
 
 object AllFormats {

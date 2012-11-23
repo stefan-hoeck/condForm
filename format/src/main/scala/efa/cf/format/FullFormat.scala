@@ -3,7 +3,7 @@ package efa.cf.format
 import efa.core.UniqueId
 
 case class FullFormat[A] (
-  baseName: String,
+  baseId: String,
   format: A,
   names: Set[String],
   isNew: Boolean
@@ -13,8 +13,8 @@ case class FullFormat[A] (
 }
 
 object FullFormat {
-  implicit def FullFormatFormatted[A](implicit F:Formatted[A]) =
-    fromProps[FullFormat[A]](F formatProps _.format)
+  implicit def FullFormatFormatted[A](implicit F:HasFormatProps[A]) =
+    propsName[FullFormat[A]](F formatProps _.format)(F id _.format)
 }
 
 // vim: set ts=2 sw=2 et:
