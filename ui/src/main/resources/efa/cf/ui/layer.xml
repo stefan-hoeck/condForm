@@ -3,24 +3,24 @@
 <filesystem>
     <!--folder name="Actions">
         <folder name="CFormat">
-            <file name="efa-cformat-ui-actions-EditFormattingAction.instance"/>
+            <file name="efa-cf-ui-actions-EditFormattingAction.instance"/>
         </folder>    
     </folder>
     <folder name="Toolbars">
         <folder name="ConditionalFormatting">
             <attr name="position" intvalue="505"/>
             <file name="EditFormattingAction.shadow">
-                <attr name="originalFile" stringvalue="Actions/CFormat/org-efa-cformat-ui-actions-EditFormattingAction.instance"/>
+                <attr name="originalFile" stringvalue="Actions/CFormat/efa-cf-ui-actions-EditFormattingAction.instance"/>
             </file>
         </folder>
     </folder-->
     <folder name="OptionsDialog">
-        <file name="efa-cformat-ui-tc-FormatOptionsPanelController.instance">
+        <file name="efa-cf-ui-tc-FormatOptionsPanelController.instance">
             <attr methodvalue="org.netbeans.spi.options.OptionsCategory.createCategory" name="instanceCreate"/>
-            <attr name="controller" newvalue="efa.cformat.ui.tc.FormatOptionsPanelController"/>
-            <attr bundlevalue="efa.cformat.ui.tc.Bundle#OptionsCategory_Name_Format" name="categoryName"/>
-            <attr name="iconBase" stringvalue="efa/cformat/ui/tc/format32.png"/>
-            <attr bundlevalue="efa.cformat.ui.tc.Bundle#OptionsCategory_Keywords_Format" name="keywords"/>
+            <attr name="controller" newvalue="efa.cf.ui.tc.FormatOptionsPanelController"/>
+            <attr bundlevalue="efa.cf.ui.tc.Bundle#OptionsCategory_Name_Format" name="categoryName"/>
+            <attr name="iconBase" stringvalue="efa/cf/ui/tc/format32.png"/>
+            <attr bundlevalue="efa.cf.ui.tc.Bundle#OptionsCategory_Keywords_Format" name="keywords"/>
             <attr name="keywordsCategory" stringvalue="Format"/>
             <attr name="position" intvalue="1000"/>
         </file>
