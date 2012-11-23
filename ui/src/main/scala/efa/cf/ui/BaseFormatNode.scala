@@ -45,7 +45,8 @@ object BaseFormatNode extends NbNodeFunctions with NbChildrenFunctions {
       iconBaseA("efa/cf/ui/base.png")
 
     (children(uniqueIdF(fbOut)) ∙ ((_: AF) fullBases l)) ⊹
-    nameA(locName)
+    nameA(locName) ⊹
+    iconBaseA("efa/cf/ui/format.png")
   }
 }
 

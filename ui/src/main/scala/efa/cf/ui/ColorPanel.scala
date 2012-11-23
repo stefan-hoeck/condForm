@@ -5,25 +5,23 @@ import efa.react.swing.{GbPanel, Swing}, Swing._
 import efa.nb.VSIn
 import java.awt.Color
 import org.efa.gui.ColorPicker
-import scala.swing.{Button, TextField}
+import scala.swing.{Button, BorderPanel}
 import scala.swing.GridBagPanel.Fill
 import scalaz._, Scalaz._, effect.IO
 
-class ColorPanel (c: Color) extends GbPanel {
+class ColorPanel (c: Color) extends BorderPanel {
   val btn = new Button("...")
-  val nameC = new TextField("", 15){editable = false}
+
+  opaque = true
 
   private def editColor (c: Color): IO[Color] =
     IO(ColorPicker.showDialog(null, c, true))
 
   lazy val colorIn: VSIn[Color] =
-    backgroundS(nameC) on btn mapIO editColor hold c to 
-    Swing.background(nameC) map (_.success)
+    backgroundS(this) on btn mapIO editColor hold c to 
+    Swing.background(this) map (_.success)
 
-  nameC beside Single(btn, f = Fill.None) add()
-
-  setWidth(400)
-
+  add(btn, BorderPanel.Position.East)
 }
 
 // vim: set ts=2 sw=2 et:
