@@ -1,5 +1,6 @@
 package efa.cf.format
 
+import efa.core.Default
 import org.scalacheck._, Prop._
 import scalaz._, Scalaz._
 
@@ -19,6 +20,9 @@ object BaseFormatTest extends Properties("BaseFormat") {
 
     b.fullList ∀ valid
   }
+
+  property("doubleBaseDefault") =
+    Default[DoubleBase].default.fString ≟ "%.3f"
 }
 
 // vim: set ts=2 sw=2 et:

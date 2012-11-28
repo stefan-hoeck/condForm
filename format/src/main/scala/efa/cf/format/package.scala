@@ -7,6 +7,7 @@ import org.scalacheck._, Arbitrary.arbitrary
 import scalaz._, Scalaz._, effect._
 
 package object format {
+
   lazy val loc = Service.unique[FormatLocal](FormatLocal)
 
   val formatProps = "efa_cf_formatProps"
@@ -14,6 +15,7 @@ package object format {
   val booleanBase = "efa_cf_booleanBase"
   val doubleBase = "efa_cf_doubleBase"
   val doubleFormat = "efa_cf_doubleFormat"
+  val gradient = "efa_cf_gradient"
   val stringBase = "efa_cf_stringBase"
   val stringFormat = "efa_cf_stringFormat"
 
@@ -62,10 +64,16 @@ package object format {
       def formatPropsS (f: DoubleFormat) = f.props
     }
 
-  def mapGen[A:Arbitrary:Formatted]: Gen[Map[String,A]] = for {
+  type StringId[A] = UniqueId[A,String]
+
+  def id[A:StringId](a: A): String = implicitly[StringId[A]] id a
+
+  def idPair[A:StringId](a: A): (String,A) = id(a) → a
+
+  def mapGen[A:Arbitrary:StringId]: Gen[Map[String,A]] = for {
     i  ← Gen choose (1, 10)
     as ← Gen listOfN (i, arbitrary[A]) 
-  } yield as map (a ⇒ Formatted[A].id(a) → a) toMap
+  } yield as map idPair[A] toMap
 }
 
 // vim: set ts=2 sw=2 et:

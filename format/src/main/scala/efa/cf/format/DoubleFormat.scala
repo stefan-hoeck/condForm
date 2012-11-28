@@ -21,9 +21,13 @@ object DoubleFormat {
 
   lazy val default = DoubleFormat(!!!, defaultTerm, "%.3f")
 
-  implicit lazy val DoubleFormatDefault = Default default default
+  implicit lazy val DoubleFormatFormatted =
+    new Formatted[DoubleFormat] with UniqueNamed[DoubleFormat] {
+      val uniqueNameL = DoubleFormat.props.name
+      val formatPropsL = DoubleFormat.props
+    }
 
-  implicit lazy val DoubleFormatFormatted = formatted(props)(_.props.name)
+  implicit lazy val DoubleFormatDefault = Default default default
 
   implicit lazy val DoubleFormatEqual: Equal[DoubleFormat] =
     Equal.equalBy(f ⇒ (f.props, f.term, f.formatString))

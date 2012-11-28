@@ -17,7 +17,11 @@ object BooleanFormat {
 
   implicit lazy val BooleanFormatDefault = Default default default
 
-  implicit lazy val BooleanFormatFormatted = formatted(props)(_.props.name)
+  implicit lazy val BooleanFormatFormatted =
+    new Formatted[BooleanFormat] with UniqueNamed[BooleanFormat] {
+      val uniqueNameL = BooleanFormat.props.name
+      val formatPropsL = BooleanFormat.props
+    }
 
   implicit lazy val BooleanFormatEqual: Equal[BooleanFormat] =
     Equal.equalBy(f ⇒ (f.props, f.value))

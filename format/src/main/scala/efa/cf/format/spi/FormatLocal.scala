@@ -10,6 +10,7 @@ trait FormatLocal {
   def bluePrint: String
   def default: String
   def good: String
+  def gradient: String
   def invalidDoubleTermFormat(s: String): String
   def invalidRegex: String
   def ok: String
@@ -26,6 +27,7 @@ object FormatLocal extends FormatLocal {
   def bluePrint = "Blueprint"
   def default = "Default"
   def good = "Good"
+  def gradient = "Gradient"
   def invalidDoubleTermFormat(s: String) = "Unknown format for term: " + s
 
   def invalidRegex = "Unknown format for regular expression." ++

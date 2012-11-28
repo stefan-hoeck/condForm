@@ -21,7 +21,11 @@ object StringFormat {
 
   implicit lazy val StringFormatDefault = Default default default
 
-  implicit lazy val StringFormatFormatted = formatted(props)(_.props.name)
+  implicit lazy val StringFormatFormatted =
+    new Formatted[StringFormat] with UniqueNamed[StringFormat] {
+      val uniqueNameL = StringFormat.props.name
+      val formatPropsL = StringFormat.props
+    }
 
   implicit lazy val StringFormatEqual: Equal[StringFormat] =
     Equal.equalBy(f ⇒ (f.props, f.regex))

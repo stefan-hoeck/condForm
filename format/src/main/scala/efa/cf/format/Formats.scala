@@ -32,20 +32,33 @@ object Formats {
 
   def set (af: AllFormats): IO[Unit] = formatsVar.get >>= (_ put af)
 
+  def mod (f: AllFormats ⇒ AllFormats): IO[Unit] =
+    formatsVar.get >>= (_ mod f)
+
+  def registerBoolean(l: Localization): IO[Unit] = 
+    mod(AllFormats registerBoolean l)
+
+  def registerDouble(l: Localization): IO[Unit] = 
+    mod(AllFormats registerDouble l)
+
+  def registerString(l: Localization): IO[Unit] = 
+    mod(AllFormats registerString l)
+
   private[format] def loadAll (
     pref: ValLogIO[Preferences] = prefs
   ): IO[AllFormats] = logger logValZ (
-    ^^^(load[FormatProps](formatProps, pref),
+    ^^^^(load[FormatProps](formatProps, pref),
       load[BooleanBase](booleanBase, pref),
       load[DoubleBase](doubleBase, pref),
+      load[Gradient](gradient, pref),
       load[StringBase](stringBase, pref))(AllFormats.apply)
   )
 
-  private[format] def load[A:ToXml:Formatted](
+  private[format] def load[A:ToXml:StringId](
     label: String, 
     pref: ValLogIO[Preferences] = prefs
   ): ValLogIO[Map[String, A]] = for {
-      _     ← info("Loading formattings for %s" + label)
+      _     ← info("Loading formattings for " + label)
       ps    ← pref
       p     ← liftDis (fromPrefs[A](label, ps).disjunction)
     } yield p
@@ -61,6 +74,7 @@ object Formats {
     _  ← storeMap(formatProps, pref, af.bluePrintsM)
     _  ← storeMap(booleanBase, pref, af.boolsM)
     _  ← storeMap(doubleBase, pref, af.doublesM)
+    _  ← storeMap(gradient, pref, af.gradientsM)
     _  ← storeMap(stringBase, pref, af.stringsM)
   } yield ()
 
@@ -87,14 +101,13 @@ object Formats {
     }
   }
 
-  private[this] def fromPrefs[A:ToXml:HasFormatProps] (
+  private[this] def fromPrefs[A:ToXml:StringId] (
     label: String, p: Preferences
   ): ValRes[Map[String,A]] = {
     def load (i: Int): ValRes[A] =
       ToXml[A] fromXml (XML loadString p.get(itemLbl(label, i), ""))
 
-    def loadPair (i: Int): ValRes[(String,A)] =
-      load(i) map (a ⇒ HasFormatProps[A].id(a) → a)
+    def loadPair (i: Int): ValRes[(String,A)] = load(i) map idPair[A]
 
     val i = p.getInt(countLbl(label), 0)
 

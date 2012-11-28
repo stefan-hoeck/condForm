@@ -18,9 +18,6 @@ object FormatProps {
   implicit lazy val FormatPropsDefault: Default[FormatProps] =
     Default default default
 
-  implicit lazy val FormatPropsUniqueId =
-    UniqueId.get[FormatProps,String](_.name)
-
   implicit lazy val FormatPropsEqual: Equal[FormatProps] = Equal.equalBy(
     f ⇒ (f.foreground, f.background, f.name))
 
@@ -43,7 +40,10 @@ object FormatProps {
   }
 
   implicit lazy val FormatPropsFormatted =
-    formatted(Lens.self[FormatProps])(_.name)
+    new Formatted[FormatProps] with UniqueNamed[FormatProps] {
+      val uniqueNameL = FormatProps.name
+      val formatPropsL = Lens.self[FormatProps]
+    }
   
   private lazy val transparent: Color = new Color(0, 0, 0, 0)
   private lazy val fore: Color = new Label().foreground

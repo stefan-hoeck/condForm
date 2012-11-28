@@ -24,7 +24,14 @@ object BaseFormat {
   implicit def BaseFormatDefault[A] = Default default (
     BaseFormat[A](loc.base, !!!, Nil, ""))
 
-  implicit def BaseFormatFormatted[A] = formatted(props[A])(_.id)
+  implicit lazy val DoubleBaseDefault = Default default (
+    BaseFormat[DoubleFormat](loc.base, !!!, Nil, "%.3f"))
+
+  implicit def BaseFormatFormatted[A] = 
+    new Formatted[BaseFormat[A]] with UniqueNamed[BaseFormat[A]] {
+      def formatPropsL = BaseFormat.props[A]
+      def uniqueNameL = BaseFormat.id[A]
+    }
 
   implicit def BaseFormatEqual[A:Equal]: Equal[BaseFormat[A]] =
     Equal.equalBy(f ⇒ (f.id, f.props, f.formats, f.fString))
