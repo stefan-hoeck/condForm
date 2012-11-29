@@ -37,7 +37,7 @@ case class AllFormats (
 object AllFormats {
   private def e[A,B]: Map[A,B] = Map.empty
 
-  val default = AllFormats(e, e, e, e, e)
+  val default = AllFormats(FormatProps.defaults, e, e, e, e)
 
   implicit val AllFormatsDefault = Default default default
 
@@ -90,11 +90,13 @@ object AllFormats {
   def registerString (l: Localization)(a: AllFormats): AllFormats =
     tryRegister(stringsM, l)(a)
 
-  private def tryRegister[A:Default:UniqueNamed] (
+  private def tryRegister[A:Default:UniqueNamed:Formatted] (
     lens: AllFormats @> Map[String,A], loc: Localization
   )(a: AllFormats): AllFormats = {
     val id = loc.name
-    def newA = UniqueNamed[A] setId (Default[A].default, id)
+    def newA = 
+      (UniqueNamed[A].setId(id) >>
+      Formatted[A].setName(loc.locName)) exec Default[A].default
 
     lens mod (m ⇒ m get id fold (_ ⇒ m, m + (id → newA)), a)
   }

@@ -7,7 +7,7 @@ import scala.swing.CheckBox
 private[editors] class BooleanEditor(name: String, v: Boolean, desc: String) 
 extends FormattedEditor[Boolean,BooleanFormat](name, v, desc) {
   override type Comp = CheckBox
-  override def createComponent = point(new CheckBox)
+  override def createComponent = point(new CheckBox{opaque = true})
   override def register(f: AllFormats) = f.boolsM
 
   override protected def displayUnformatted(c: Comp) = point(c.selected = v)

@@ -8,7 +8,10 @@ private[editors] class StringEditor(name: String, value: String, desc: String)
 extends FormattedEditor[String,StringFormat](name, value, desc) {
   override type Comp = Label
   override def createComponent =
-    point(new Label{horizontalAlignment = Alignment.Leading})
+    point(new Label{
+      opaque = true
+      horizontalAlignment = Alignment.Leading
+    })
 
   override def register (f: AllFormats) = f.stringsM
 

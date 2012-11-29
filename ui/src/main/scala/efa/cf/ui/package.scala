@@ -18,6 +18,9 @@ package object ui {
 
   implicit val DoubleFormatEditable: FFEditable[DoubleFormat] =
     DialogEditable.io(FPPanel.doubleP)(_.in)
+
+  implicit def FullBaseEditable[A] =
+    DialogEditable.io(BaseFormatPanel.create[A])(_.in)
 }
 
 // vim: set ts=2 sw=2 et:

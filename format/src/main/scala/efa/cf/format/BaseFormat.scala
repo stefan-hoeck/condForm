@@ -10,11 +10,17 @@ import scalaz._, Scalaz._, scalacheck.ScalaCheckBinding._
 case class BaseFormat[A] (
   id: String, props: FormatProps, formats: List[A], fString: String
 ) {
+  def names (implicit N:Formatted[A]): Set[String] =
+    formats map N.locName toSet
 
-  def fullList (implicit N:Formatted[A]): List[FullFormat[A]] = {
-    val names = formats map N.locName toSet
+  def fullList (implicit N:Formatted[A]): List[FullFormat[A]] =
+    fullFormats(formats, false)
 
-    formats sortBy N.locName map (FullFormat(id, _, names, false))
+  def fullFormats (as: List[A], isNew: Boolean)
+  (implicit N:Formatted[A]): List[FullFormat[A]] = {
+    val ns = names
+
+    as sortBy N.locName map (FullFormat(id, _, ns, isNew))
   }
    
 }

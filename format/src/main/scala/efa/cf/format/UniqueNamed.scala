@@ -1,12 +1,12 @@
 package efa.cf.format
 
 import efa.core.UniqueId
-import scalaz.@>
+import scalaz._, Scalaz._
 
 trait UniqueNamed[A] extends UniqueId[A,String] {
   def uniqueNameL: A @> String
   def id (a: A): String = uniqueNameL get a
-  def setId (a: A, s: String): A = uniqueNameL set (a, s)
+  def setId (s: String): State[A,Unit] = uniqueNameL := s void
 }
 
 object UniqueNamed {

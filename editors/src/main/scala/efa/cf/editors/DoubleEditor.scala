@@ -11,7 +11,10 @@ private[editors] class DoubleEditor(name: String, v: Double, desc: String)
    extends FormattedEditor[Double,DoubleFormat](name, v, desc) {
   override type Comp = Label
   override def createComponent =
-    point(new Label{horizontalAlignment = Alignment.Trailing})
+    point(new Label{
+      opaque = true
+      horizontalAlignment = Alignment.Trailing
+    })
 
   override def register(f: AllFormats) = f.doublesM
 

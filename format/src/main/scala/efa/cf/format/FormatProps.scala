@@ -50,10 +50,11 @@ object FormatProps {
   private lazy val goodC = new Color(0, 255, 0, 100)
   private lazy val okC = new Color(255, 255, 0, 100)
   private lazy val badC = new Color(255, 0, 0, 100)
-  private lazy val defaults = List(
-    FormatProps(fore, goodC, loc.good),
-    FormatProps(fore, okC, loc.ok),
-    FormatProps(fore, badC, loc.bad)
+
+  lazy val defaults = Map(
+    loc.good → FormatProps(fore, goodC, loc.good),
+    loc.ok → FormatProps(fore, okC, loc.ok),
+    loc.bad → FormatProps(fore, badC, loc.bad)
   )
   
   //Lenses
@@ -71,32 +72,5 @@ object FormatProps {
     lazy val background = l andThen FormatProps.background
   }
 }
-
-//object FormatProps extends Loggable with NbBundled {
-//  val Label = "efa_cf_formatProps"
-//  
-//  def now = bluePrints.now
-//  def setFormats (fs: List[FormatProps]): Unit = {
-//    require((fs map (_.name)).distinct.size == fs.size)
-//    sig() = fs
-//  }
-//  
-//  private[formatting] def load = {
-//    info("Loading formatting blue prints")
-//    val prefs = NbPreferences.forModule(getClass)
-//    prefs.get(Label + StoredRegister.version, "") match {
-//      case "" => defaults
-//      case x => (XML.loadString(x) \ Label map (new FormatProps(_))).toList
-//    }
-//  }
-//  
-//  private[formatting] def store() = {
-//    info("Persisting formatting blue prints")
-//    val prefs = NbPreferences.forModule(getClass)
-//    prefs.put(Label + StoredRegister.version, 
-//              <value>{bluePrints.now map (_.toXml)}</value>.toString)
-//  }
-//  
-//}
 
 // vim: set ts=2 sw=2 et:

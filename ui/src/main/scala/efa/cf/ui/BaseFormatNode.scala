@@ -31,6 +31,12 @@ object BaseFormatNode extends NbNodeFunctions with NbChildrenFunctions {
 
     def update (f: FF[A], a: A) = delete(f) >> adjFs(f, a :: _)
 
+    def nts: NodeOut[FB[A],ValSt[AF]] = {
+      val singleNt = addNtDialog[FF[A],A] withIn update map (_.success)
+
+      NodeOut((o,n) ⇒ _.bluePrints foldMap singleNt.run(o,n))
+    }
+
     val out: NodeOut[FF[A],ValSt[AF]] = 
       destroyEs(delete) ⊹
       (editDialog withIn update map (_.success)) ⊹
@@ -40,7 +46,10 @@ object BaseFormatNode extends NbNodeFunctions with NbChildrenFunctions {
 
     val fbOut: NodeOut[FB[A],ValSt[AF]] =
       (children(uniqueIdF(out)) ∙ ((_: FB[A]).baseFormat.fullList)) ⊹
+      editDialogEs((bf: BF[A]) ⇒ l += (bf.id → bf) void)⊹
       name[FB[A]](_.locName) ⊹ 
+      clearNt ⊹
+      nts ⊹
       contextRootsA(List("ContextActions/BaseFormatNode")) ⊹
       iconBaseA("efa/cf/ui/base.png")
 
