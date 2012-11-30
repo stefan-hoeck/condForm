@@ -1,24 +1,21 @@
-//package org.efa.cformat.ui.actions
-////
-////import java.awt.event.ActionEvent
-////import org.efa.cformat.ui.AllFormatsSignal
-////import org.efa.cformat.ui.tc.{FormatPanel, FormatOptionsPanelController}
-////import org.efa.dialog.Input
-////import org.efa.util.prop.NbBundled
-////import org.openide.util.HelpCtx
-////import org.openide.util.actions.SystemAction
-////
-////class EditFormattingAction 
-////extends SystemAction
-////with NbBundled {
-////  override def getName = message("CTL_editFormattingAction")
-////  override def getHelpCtx = HelpCtx.DEFAULT_HELP
-////  override def actionPerformed(e: ActionEvent): Unit = {
-////    val pnl = new FormatPanel
-////    if (Input(pnl)) FormatOptionsPanelController.applyChanges()
-////    else AllFormatsSignal.reset()
-////  }
-////  override def iconResource = "org/efa/cformat/ui/tc/format.png"
-////}
-//
-//// vim: set ts=2 sw=2 et:
+package efa.cf.ui.actions
+
+import efa.cf.ui.tc.FormatPanel
+import efa.nb.dialog.Input
+import efa.nb.actions.NbSystemAction
+import scalaz._, Scalaz._, effect.IO
+
+class EditFormattingAction
+   extends NbSystemAction (efa.cf.ui.loc.editFormattingsAction) {
+
+  def run = for {
+    p ← FormatPanel.create
+    b ← Input(p)
+    _ ← if (b) p.applyChanges else IO.ioUnit
+    _ ← p.clear
+  } yield ()
+
+  override def iconResource = "efa/cf/ui/tc/format.png"
+}
+
+// vim: set ts=2 sw=2 et:

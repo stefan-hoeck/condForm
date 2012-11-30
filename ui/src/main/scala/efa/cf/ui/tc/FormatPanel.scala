@@ -36,7 +36,9 @@ class FormatPanel (
   override def getExplorerManager = mgr
   override def getLookup = lookup
 
-  private[tc] def applyChanges: IO[Unit] = s.now >>= Formats.set
+  private[ui] def applyChanges: IO[Unit] = s.now >>= Formats.set
+
+  private[ui] def clear: IO[Unit] = cs.toList foldMap (_.disconnect)
 }
 
 object FormatPanel extends StateTransFunctions {

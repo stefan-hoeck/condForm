@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
-    <!--folder name="Actions">
+    <folder name="Actions">
         <folder name="CFormat">
             <file name="efa-cf-ui-actions-EditFormattingAction.instance"/>
         </folder>    
@@ -11,9 +11,13 @@
             <attr name="position" intvalue="505"/>
             <file name="EditFormattingAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/CFormat/efa-cf-ui-actions-EditFormattingAction.instance"/>
+                <attr name="position" intvalue="40"/>
+            </file>
+            <file name="efa-cf-ui-actions-EditGradientToolbar.instance">
+                <attr name="position" intvalue="50"/>
             </file>
         </folder>
-    </folder-->
+    </folder>
     <folder name="OptionsDialog">
         <file name="efa-cf-ui-tc-FormatOptionsPanelController.instance">
             <attr methodvalue="org.netbeans.spi.options.OptionsCategory.createCategory" name="instanceCreate"/>

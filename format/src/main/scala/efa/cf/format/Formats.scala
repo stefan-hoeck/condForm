@@ -2,7 +2,7 @@ package efa.cf.format
 
 import efa.core._, Efa._
 import efa.io._, valLogIO._
-import efa.react.{Var, Signal}
+import efa.react.{Var, Signal, sTrans, SIn}
 import java.util.prefs.Preferences
 import org.openide.util.NbPreferences
 import scala.xml.{XML, Node}
@@ -26,9 +26,9 @@ object Formats {
   private[this] lazy val formatsVar: IOCached[Var[AllFormats]] =
     IOCached(loadAll() >>= (Signal newVar _))
 
-  def formats: IO[Signal[AllFormats]] = formatsVar.get
+  def formats: SIn[AllFormats] = sTrans inIO formatsVar.get
 
-  def now: IO[AllFormats] = formats >>= (_.now)
+  def now: IO[AllFormats] = formatsVar.get >>= (_.now)
 
   def set (af: AllFormats): IO[Unit] = formatsVar.get >>= (_ put af)
 
@@ -43,6 +43,12 @@ object Formats {
 
   def registerString(l: Localization): IO[Unit] = 
     mod(AllFormats registerString l)
+
+  def addGradient(g: Gradient): IO[Unit] = 
+    mod(AllFormats.gradientsM mod (_ + (g.name → g), _))
+
+  def removeGradient(g: Gradient): IO[Unit] = 
+    mod(AllFormats.gradientsM mod (_ - g.name, _))
 
   private[format] def loadAll (
     pref: ValLogIO[Preferences] = prefs

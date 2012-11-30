@@ -90,6 +90,9 @@ object AllFormats {
   def registerString (l: Localization)(a: AllFormats): AllFormats =
     tryRegister(stringsM, l)(a)
 
+  def addGradient (g: Gradient)(a: AllFormats): AllFormats =
+    (gradientsM += (g.name → g)) exec a
+
   private def tryRegister[A:Default:UniqueNamed:Formatted] (
     lens: AllFormats @> Map[String,A], loc: Localization
   )(a: AllFormats): AllFormats = {

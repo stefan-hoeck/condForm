@@ -5,43 +5,57 @@ import java.beans.{PropertyChangeSupport, PropertyChangeListener}
 import javax.swing.JComponent
 import org.netbeans.spi.options.OptionsPanelController
 import org.openide.util.Lookup
+import scalaz._, Scalaz._, effect.IO
+
 
 class FormatOptionsPanelController extends OptionsPanelController {
-  private val pcs = new PropertyChangeSupport(this)
-  private var pnl: Option[FormatPanel] = None
+  private[this] val pcs = new PropertyChangeSupport(this)
 
-  private def panel = {
-    if (pnl.isEmpty) pnl = Some (FormatPanel.create.unsafePerformIO)
-    pnl.get
-  }
+  private[this] var p: Option[FormatPanel] = None
+
+  private def getPnl: IO[FormatPanel] = for {
+    op   ← IO(p)
+    res  ← op fold (IO(_), for {
+           newP ← FormatPanel.create
+           _    ← IO (p = Some(newP))
+         } yield newP)
+  } yield res
+
+  private def clearPnl: IO[Unit] = for {
+    op ← IO(p)
+    _  ← op fold (_.clear >> IO(p = None), IO.ioUnit)
+  } yield ()
 
   private[this] var c = false
-  private def changed = c
-  private def changed_= (boo: Boolean) = {
-    if (c != boo) {
-      c = boo
-      pcs.firePropertyChange(OptionsPanelController.PROP_CHANGED, c, boo)
+  private[this] def hasChanged = IO(c)
+  private[this] def setChanged (b: Boolean) = IO{
+    if (c != b) {
+      c = b
+      pcs.firePropertyChange(OptionsPanelController.PROP_CHANGED, c, b)
       pcs.firePropertyChange(OptionsPanelController.PROP_VALID, null, null)
     }
   }
   
-  override def update() {changed = false}
+  override def update() {setChanged(false).unsafePerformIO}
 
-  override def applyChanges() {
-    pnl foreach (_.applyChanges.unsafePerformIO)
-    pnl = None
-    changed = false
-  }
+  private[this] def applyCs: IO[Unit] = for {
+    op ← IO(p)
+    _  ← op fold (_.applyChanges, IO.ioUnit)
+    _  ← clearPnl
+    _  ← setChanged(false)
+  } yield ()
 
-  override def cancel() {
-    pnl = None
-    changed = false
-  }
+  override def applyChanges() {applyCs.unsafePerformIO}
+
+  private[this] def cncl: IO[Unit] = clearPnl >> setChanged(false)
+
+  override def cancel() {cncl.unsafePerformIO}
 
   override def isValid = true
-  override def isChanged = changed
+  override def isChanged = hasChanged.unsafePerformIO
   override def getHelpCtx = null
-  override def getComponent(lkp: Lookup): JComponent = panel
+  override def getComponent(lkp: Lookup): JComponent =
+    getPnl.unsafePerformIO
 
   override def addPropertyChangeListener(l: PropertyChangeListener) {
     pcs.addPropertyChangeListener(l)
