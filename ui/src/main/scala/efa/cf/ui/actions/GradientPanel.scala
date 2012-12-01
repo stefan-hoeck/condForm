@@ -6,7 +6,7 @@ import efa.core.ValRes
 import efa.nb.{LookupResultWrapper, VSIn}
 import efa.nb.dialog.DialogPanel
 import efa.react._, swing.Swing
-import org.openide.util.Utilities
+import org.openide.util.{Utilities, Lookup}
 import scala.swing.{Button, TextField, Component}
 import scalaz._, Scalaz._, effect.IO
 
@@ -15,9 +15,9 @@ class GradientPanel (lrw: LookupResultWrapper[ColumnInfo])
 
   import GradientPanel._
   
-  val tBad = new TextField(5)
-  val tGood = new TextField(5)
-  val tNod = new TextField(3)
+  val tBad = new TextField(0.0D.toString, 5)
+  val tGood = new TextField(0.0D.toString, 5)
+  val tNod = new TextField(1.toString, 3)
   val setB = new Button(uLoc.set)
   val removeB = new Button(uLoc.remove)
    
@@ -45,12 +45,14 @@ class GradientPanel (lrw: LookupResultWrapper[ColumnInfo])
     def remove (o: OGrad) = o fold (Formats.removeGradient, IO.ioUnit)
     def set (v: VGrad) = v fold (_ ⇒ IO.ioUnit, Formats.addGradient)
     val vOut: Out[VGrad] = Swing enabled setB contramap (_.isSuccess)
+    val gOut: Out[Gradient] = 
+      (Swing.text(tNod) ∙ ((_: Gradient).nod.toString)) ⊹
+      (Swing.text(tBad) ∙ (_.bad.toString)) ⊹
+      (Swing.text(tGood) ∙ (_.good.toString))
+
     val oOut: Out[OGrad] =
       (Swing.enabled(removeB) ∙ ((_: OGrad).nonEmpty)) ⊹
-      (Swing.text(tNod) ∙ (_ fold (_.nod.toString, ""))) ⊹
-      (Swing.text(tBad) ∙ (_ fold (_.bad.toString, ""))) ⊹
-      (Swing.text(tGood) ∙ (_ fold (_.good.toString, "")))
-
+      (_ fold (gOut apply _, IO.ioUnit))
 
     (gradS to oOut on Swing.clicks(removeB) mapIO remove) ⊹ 
     (in to vOut on Swing.clicks(setB) mapIO set)
@@ -62,8 +64,10 @@ object GradientPanel {
   type VGrad = ValRes[Gradient]
   type OGrad = Option[Gradient]
 
-  def create: IO[Component] = for {
-    lrw ← LookupResultWrapper[ColumnInfo](Utilities.actionsGlobalContext)
+  def create: IO[Component] = createLkp(Utilities.actionsGlobalContext)
+
+  private[actions] def createLkp (l: Lookup) : IO[GradientPanel] = for {
+    lrw ← LookupResultWrapper[ColumnInfo](l)
     p   ← IO(new GradientPanel(lrw))
     _   ← p.behavior.go
   } yield p

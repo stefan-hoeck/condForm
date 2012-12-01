@@ -6,7 +6,7 @@ import efa.nb.node.{NbNodeFunctions, NodeOut, NbChildrenFunctions}
 import scalaz._, Scalaz._, effect._
 
 object FormatPropNode extends NbNodeFunctions with NbChildrenFunctions {
-  type FF[A] = FullFormat[A]
+  type FFF = FullFormat[FormatProps]
 
   lazy val l = Lens.self[AllFormats]
 
@@ -18,12 +18,12 @@ object FormatPropNode extends NbNodeFunctions with NbChildrenFunctions {
     contextRootsA(List("ContextActions/BaseFormatNode")) ⊹
     iconBaseA("efa/cf/ui/format.png")
 
-  lazy val fpOut: NodeOut[FF[FormatProps],ValSt[AllFormats]] =
+  lazy val fpOut: NodeOut[FFF,ValSt[AllFormats]] =
     destroyEs(l.delBluePrint) ⊹ 
     name(_.format.name) ⊹
     contextRootsA(List("ContextActions/SingleFormatNode")) ⊹
     iconBaseA("efa/cf/ui/format.png") ⊹
-    editDialogEs(l.addBluePrint)
+    (editDialog[FFF,FormatProps] withIn (l.updateBluePrint(_,_).success))
 }
 
 // vim: set ts=2 sw=2 et:

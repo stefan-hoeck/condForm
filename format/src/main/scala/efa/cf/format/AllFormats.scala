@@ -79,6 +79,9 @@ object AllFormats {
       bluePrintsM -= f.format.name void
 
     def addBluePrint (f: FormatProps) = bluePrintsM += (f.name → f) void
+
+    def updateBluePrint (ff: FullFormat[FormatProps], f: FormatProps) =
+      delBluePrint(ff) >> addBluePrint(f)
   }
 
   def registerBoolean (l: Localization)(a: AllFormats): AllFormats =

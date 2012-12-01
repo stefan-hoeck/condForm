@@ -44,8 +44,10 @@ object Formats {
   def registerString(l: Localization): IO[Unit] = 
     mod(AllFormats registerString l)
 
-  def addGradient(g: Gradient): IO[Unit] = 
-    mod(AllFormats.gradientsM mod (_ + (g.name → g), _))
+  def addGradient(g: Gradient): IO[Unit] = logger logValM (
+    trace("Adding gradient: " + g.toString) >>
+    liftIO(mod(AllFormats.gradientsM mod (_ + (g.name → g), _)))
+  )
 
   def removeGradient(g: Gradient): IO[Unit] = 
     mod(AllFormats.gradientsM mod (_ - g.name, _))
@@ -53,7 +55,7 @@ object Formats {
   private[format] def loadAll (
     pref: ValLogIO[Preferences] = prefs
   ): IO[AllFormats] = logger logValZ (
-    ^^^^(load[FormatProps](formatProps, pref),
+    ^^^^(load[FormatProps](formatProps, pref, FormatProps.defaults),
       load[BooleanBase](booleanBase, pref),
       load[DoubleBase](doubleBase, pref),
       load[Gradient](gradient, pref),
@@ -62,11 +64,12 @@ object Formats {
 
   private[format] def load[A:ToXml:StringId](
     label: String, 
-    pref: ValLogIO[Preferences] = prefs
+    pref: ValLogIO[Preferences] = prefs,
+    default: Map[String,A] = Map.empty[String,A]
   ): ValLogIO[Map[String, A]] = for {
       _     ← info("Loading formattings for " + label)
       ps    ← pref
-      p     ← liftDis (fromPrefs[A](label, ps).disjunction)
+      p     ← liftDis (fromPrefs[A](label, ps, default).disjunction)
     } yield p
 
   private[format] def store(
@@ -108,16 +111,17 @@ object Formats {
   }
 
   private[this] def fromPrefs[A:ToXml:StringId] (
-    label: String, p: Preferences
+    label: String, p: Preferences, default: Map[String,A]
   ): ValRes[Map[String,A]] = {
     def load (i: Int): ValRes[A] =
       ToXml[A] fromXml (XML loadString p.get(itemLbl(label, i), ""))
 
     def loadPair (i: Int): ValRes[(String,A)] = load(i) map idPair[A]
 
-    val i = p.getInt(countLbl(label), 0)
+    val i = p.getInt(countLbl(label), -1)
 
-    (0 until i).toList traverse loadPair map (_.toMap)
+    if (i < 0) default.success
+    else (0 until i).toList traverse loadPair map (_.toMap)
   }
 
   private[this] def countLbl(l: String) = l + version + "Count"
