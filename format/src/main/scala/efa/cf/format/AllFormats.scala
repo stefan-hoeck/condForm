@@ -15,6 +15,7 @@ case class AllFormats (
   boolsM: Map[String,BooleanBase],
   doublesM: Map[String,DoubleBase], 
   gradientsM: Map[String,Gradient],
+  gradientColorsM: Map[String,GradientColors],
   stringsM: Map[String,StringBase]
 ) {
   import AllFormats._
@@ -23,6 +24,15 @@ case class AllFormats (
 
   lazy val bluePrintsFF =
     bluePrints ∘ (FullFormat("", _, bluePrintsM.keySet, false))
+
+  lazy val gradientColors = m2s(gradientColorsM) sortBy (_.name)
+
+  lazy val gradientColorsFF =
+    gradientColors ∘ (FullFormat("", _, gradientColorsM.keySet, false))
+
+  def gcBluePrint: FullFormat[GradientColors] = FullFormat (
+    "", GradientColors.bluePrint, gradientColorsM.keySet, true
+  )
 
   def fpBluePrint: FullFormat[FormatProps] = FullFormat(
     "", FormatProps.bluePrint, bluePrintsM.keySet, true
@@ -37,18 +47,19 @@ case class AllFormats (
 object AllFormats {
   private def e[A,B]: Map[A,B] = Map.empty
 
-  val default = AllFormats(FormatProps.defaults, e, e, e, e)
+  val default = AllFormats(FormatProps.defaults, e, e, e, e, e)
 
   implicit val AllFormatsDefault = Default default default
 
   implicit val AllFormatsEqual = Equal.equalA[AllFormats]
 
   implicit val AllFormatsArbitrary: Arbitrary[AllFormats] = Arbitrary(
-    ^^^^(
+    ^^^^^(
       mapGen[FormatProps],
       mapGen[BooleanBase],
       mapGen[DoubleBase],
       mapGen[Gradient],
+      mapGen[GradientColors],
       mapGen[StringBase]
     )(AllFormats.apply)
   )
@@ -65,6 +76,9 @@ object AllFormats {
   val gradientsM: AllFormats @> Map[String,Gradient] =
     Lens.lensu((a,b) ⇒ a copy (gradientsM = b), _.gradientsM)
   
+  val gradientColorsM: AllFormats @> Map[String,GradientColors] =
+    Lens.lensu((a,b) ⇒ a copy (gradientColorsM = b), _.gradientColorsM)
+  
   val stringsM: AllFormats @> Map[String,StringBase] =
     Lens.lensu((a,b) ⇒ a copy (stringsM = b), _.stringsM)
   
@@ -73,6 +87,7 @@ object AllFormats {
     lazy val boolsM = l andThen AllFormats.boolsM
     lazy val doublesM = l andThen AllFormats.doublesM
     lazy val gradientsM = l andThen AllFormats.gradientsM
+    lazy val gradientColorsM = l andThen AllFormats.gradientColorsM
     lazy val stringsM = l andThen AllFormats.stringsM
 
     def delBluePrint (f: FullFormat[FormatProps]) =
@@ -82,6 +97,14 @@ object AllFormats {
 
     def updateBluePrint (ff: FullFormat[FormatProps], f: FormatProps) =
       delBluePrint(ff) >> addBluePrint(f)
+
+    def delGCs (f: FullFormat[GradientColors]) =
+      gradientColorsM -= f.format.name void
+
+    def addGCs (f: GradientColors) = gradientColorsM += (f.name → f) void
+
+    def updateGCs (ff: FullFormat[GradientColors], f: GradientColors) =
+      delGCs(ff) >> addGCs(f)
   }
 
   def registerBoolean (l: Localization)(a: AllFormats): AllFormats =

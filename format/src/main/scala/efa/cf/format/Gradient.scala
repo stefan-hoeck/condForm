@@ -17,8 +17,7 @@ case class Gradient (
     case x => "%." + x + "f"
   }
   
-  def colorFor (d: Double): Color =
-    colorFor(d, IndexedSeq(badC, okC, goodC))
+  def colorFor (d: Double): Color = colorFor(d, GradientColors.defaultColors)
   
   def colorFor (d: Double, cs: IndexedSeq[Color]): Color =
     cFor(d, cs, bad, good)
@@ -56,10 +55,6 @@ object Gradient {
     mix(l.getBlue, u.getBlue, x),
     mix(l.getAlpha, u.getAlpha, x)
   )
-
-  private[format] lazy val goodC = new Color(0, 255, 0)
-  private[format] lazy val okC = new Color(255, 255, 0)
-  private[format] lazy val badC = new Color(255, 0, 0)
   val nodVal = Validators interval (0, 20)
 
   lazy val default = Gradient(loc.gradient, 1, 0D, 100D)

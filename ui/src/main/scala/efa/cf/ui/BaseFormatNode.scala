@@ -11,6 +11,7 @@ import scalaz._, Scalaz._
 object BaseFormatNode extends NbNodeFunctions with NbChildrenFunctions {
   lazy val allOut: NodeOut[AF,ValSt[AF]] = children(
     singleF(FormatPropNode.rootOut),
+    singleF(GradientColorsNode.rootOut),
     singleF(booleanOut),
     singleF(doubleOut)
   )

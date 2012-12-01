@@ -16,8 +16,11 @@ package object format {
   val doubleBase = "efa_cf_doubleBase"
   val doubleFormat = "efa_cf_doubleFormat"
   val gradient = "efa_cf_gradient"
+  val gradientColors = "efa_cf_gradientColors"
   val stringBase = "efa_cf_stringBase"
   val stringFormat = "efa_cf_stringFormat"
+
+  type Colors = IndexedSeq[Color]
 
   private[format] implicit val ColorEqual: Equal[Color] =
     Equal.equalBy(_.getRGB)
@@ -32,6 +35,21 @@ package object format {
     Arbitrary(arbitrary[Int] map (new Color(_, true)))
 
   private[format] implicit val ColorToXml: ToXml[Color] = ToXml.readShow
+
+  private[format] implicit val ColorsArbitrary: Arbitrary[Colors] =
+    Arbitrary(Gen listOf arbitrary[Color] map (_.toIndexedSeq))
+
+  private[format] implicit val ColorsShow: Show[Colors] =
+    Show.shows(_ map (_.shows) mkString ";")
+
+  private[format] implicit val ColorsRead: Read[Colors] =
+    Read.readV(s ⇒ 
+      if (s.isEmpty) IndexedSeq.empty[Color].success
+      else
+        (s split ";" toList) traverse (_.read[Color]) map (_.toIndexedSeq)
+    )
+
+  private[format] implicit val ColorsToXml: ToXml[Colors] = ToXml.readShow
 
   private[format] def formatted[A](l: A @> FormatProps)(i: A ⇒ String)
   : Formatted[A] = new Formatted[A] {

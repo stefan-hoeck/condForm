@@ -11,9 +11,9 @@ case class FormatProps(foreground: Color, background: Color, name: String)
 
 object FormatProps {
 
-  lazy val default = FormatProps(fore, transparent, loc.default)
+  lazy val default = FormatProps(fore, goodC, loc.default)
 
-  lazy val bluePrint = FormatProps(fore, transparent, loc.bluePrint)
+  lazy val bluePrint = FormatProps(fore, goodC, loc.bluePrint)
 
   implicit lazy val FormatPropsDefault: Default[FormatProps] =
     Default default default
@@ -47,9 +47,9 @@ object FormatProps {
   
   private lazy val transparent: Color = new Color(0, 0, 0, 0)
   private lazy val fore: Color = new Label().foreground
-  private lazy val goodC = new Color(0, 255, 0, 100)
-  private lazy val okC = new Color(255, 255, 0, 100)
-  private lazy val badC = new Color(255, 0, 0, 100)
+  lazy val goodC = new Color(0, 255, 0, 100)
+  lazy val okC = new Color(255, 255, 0, 100)
+  lazy val badC = new Color(255, 0, 0, 100)
 
   lazy val defaults = Map(
     loc.good → FormatProps(fore, goodC, loc.good),

@@ -14,6 +14,7 @@ trait FormatLocal {
   def invalidDoubleTermFormat(s: String): String
   def invalidRegex: String
   def ok: String
+  def transparent: String
   
   final def failDoubleTerm (s: String): ValRes[Term[Double]] = 
     invalidDoubleTermFormat(s).failureNel
@@ -35,6 +36,7 @@ object FormatLocal extends FormatLocal {
     "information."
 
   def ok = "OK"
+  def transparent = "Default Transparent"
 }
 
 // vim: set ts=2 sw=2 et:

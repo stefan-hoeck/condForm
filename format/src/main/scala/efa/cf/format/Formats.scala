@@ -55,11 +55,13 @@ object Formats {
   private[format] def loadAll (
     pref: ValLogIO[Preferences] = prefs
   ): IO[AllFormats] = logger logValZ (
-    ^^^^(load[FormatProps](formatProps, pref, FormatProps.defaults),
+    ^^^^^(load[FormatProps](formatProps, pref, FormatProps.defaults),
       load[BooleanBase](booleanBase, pref),
       load[DoubleBase](doubleBase, pref),
       load[Gradient](gradient, pref),
-      load[StringBase](stringBase, pref))(AllFormats.apply)
+      load[GradientColors](gradientColors, pref, GradientColors.defaultMap),
+      load[StringBase](stringBase, pref)
+    )(AllFormats.apply)
   )
 
   private[format] def load[A:ToXml:StringId](
@@ -84,6 +86,7 @@ object Formats {
     _  ← storeMap(booleanBase, pref, af.boolsM)
     _  ← storeMap(doubleBase, pref, af.doublesM)
     _  ← storeMap(gradient, pref, af.gradientsM)
+    _  ← storeMap(gradientColors, pref, af.gradientColorsM)
     _  ← storeMap(stringBase, pref, af.stringsM)
   } yield ()
 
