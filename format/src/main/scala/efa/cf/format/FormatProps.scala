@@ -11,7 +11,7 @@ case class FormatProps(foreground: Color, background: Color, name: String)
 
 object FormatProps {
 
-  lazy val default = FormatProps(fore, goodC, loc.default)
+  lazy val default = FormatProps(fore, transparent, loc.default)
 
   lazy val bluePrint = FormatProps(fore, goodC, loc.bluePrint)
 
