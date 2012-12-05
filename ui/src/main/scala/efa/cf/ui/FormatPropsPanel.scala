@@ -2,7 +2,7 @@ package efa.cf.ui
 
 import efa.cf.format._, efa.cf.format.{FullFormat ⇒ FF}
 import efa.cf.format.logic.Term
-import efa.core.Efa._
+import efa.core.{Efa, Validators, loc ⇒ cLoc}, Efa._
 import efa.nb.VSIn
 import efa.nb.dialog.DialogPanel
 import scalaz._, Scalaz._, effect.IO
@@ -19,7 +19,7 @@ abstract class FPPanel[A:Formatted] (ff: FF[A]) extends DialogPanel {
   lazy val fpIn: VSIn[FormatProps] = ^^(
     fore.colorIn,
     back.colorIn,
-    stringIn(nameC, efa.core.Validators uniqueName ff.invalidNames)
+    stringIn(nameC, Validators uniqueString (ff.invalidNames, cLoc.name))
   )(FormatProps.apply)
 }
 
