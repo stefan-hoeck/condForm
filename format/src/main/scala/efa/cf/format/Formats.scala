@@ -19,8 +19,6 @@ object Formats {
   implicit lazy val DoubleBaseToXml =
     BaseFormat.baseFormatToXml[DoubleFormat](doubleFormat)
 
-  lazy val logger = LoggerIO.consoleLogger
-
   private[format] lazy val version = "2.0.0-SNAPSHOT"
 
   private[this] lazy val formatsVar: IOCached[Var[AllFormats]] =
@@ -44,7 +42,7 @@ object Formats {
   def registerString(l: Localization): IO[Unit] = 
     mod(AllFormats registerString l)
 
-  def addGradient(g: Gradient): IO[Unit] = logger logValM (
+  def addGradient(g: Gradient): IO[Unit] = logValM (
     trace("Adding gradient: " + g.toString) >>
     liftIO(mod(AllFormats.gradientsM mod (_ + (g.name → g), _)))
   )
@@ -54,7 +52,7 @@ object Formats {
 
   private[format] def loadAll (
     pref: ValLogIO[Preferences] = prefs
-  ): IO[AllFormats] = logger logValZ (
+  ): IO[AllFormats] = logValZ (
     ^^^^^(load[FormatProps](formatProps, pref, FormatProps.defaults),
       load[BooleanBase](booleanBase, pref),
       load[DoubleBase](doubleBase, pref),
@@ -92,11 +90,13 @@ object Formats {
 
   private[format] def storeMap[A:ToXml](
     label: String, pref: ValLogIO[Preferences], m: Map[String,A]
-  ): IO[Unit] = logger logValZ (for {
+  ): IO[Unit] = logValZ (
+    for {
       _  ← info("Persisting formattings for " + label)
       ps ← pref
       _  ← point(toPrefs[A](label, m, ps))
-    } yield ())
+    } yield ()
+  )
 
   private[format] lazy val prefs: ValLogIO[Preferences] =
     point(NbPreferences.forModule(BaseFormat.getClass))
@@ -131,6 +131,12 @@ object Formats {
 
   private[this] def itemLbl(l: String, i: Int) =
     l + version + "Item" + i.toString
+
+  private[this] def logValM[A:Monoid](io: ValLogIO[A]): IO[A] =
+    pref.cfLogger >>= (_ logValM io)
+
+  private[this] def logValZ[A:Default](io: ValLogIO[A]): IO[A] =
+    pref.cfLogger >>= (_ logValZ io)
 }
 
 // vim: set ts=2 sw=2 et:

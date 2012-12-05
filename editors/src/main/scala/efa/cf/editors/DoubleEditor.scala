@@ -28,7 +28,7 @@ private[editors] class DoubleEditor(name: String, v: Double, desc: String)
     point(c.text = f.fString format v)
 
   override def paintValue(g: Graphics, r: Rectangle) {
-    Formats.logger logValM doPaintG(g, r) unsafePerformIO
+    pref.cfLogger >>= (_ logValM doPaintG(g, r)) unsafePerformIO
   }
 
   private def doPaintG (g: Graphics, r: Rectangle): ValLogIO[Unit] = for {

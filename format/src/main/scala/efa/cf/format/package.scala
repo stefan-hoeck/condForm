@@ -1,7 +1,7 @@
 package efa.cf
 
 import java.awt.{Color}
-import efa.cf.format.spi.FormatLocal
+import efa.cf.format.spi.{FormatLocal, CfPreferences}
 import efa.core._, Efa._
 import org.scalacheck._, Arbitrary.arbitrary
 import scalaz._, Scalaz._, effect._
@@ -9,6 +9,8 @@ import scalaz._, Scalaz._, effect._
 package object format {
 
   lazy val loc = Service.unique[FormatLocal](FormatLocal)
+
+  private[cf] lazy val pref = Service.unique[CfPreferences](CfPreferences)
 
   val formatProps = "efa_cf_formatProps"
   val booleanFormat = "efa_cf_booleanFormat"

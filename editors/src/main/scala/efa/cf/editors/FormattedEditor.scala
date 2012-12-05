@@ -1,7 +1,7 @@
 package efa.cf.editors
 
 import efa.cf.format._
-import efa.io.{ValLogIO, ValLogIOFunctions}
+import efa.io.{ValLogIO, ValLogIOFunctions, LoggerIO}
 import efa.react.Events
 import java.awt.{Rectangle, Graphics}
 import java.beans.PropertyEditorSupport
@@ -33,7 +33,7 @@ abstract class FormattedEditor[A,F](
   override def isPaintable = true
 
   override def paintValue(g: Graphics, r: Rectangle) {
-    Formats.logger logValM doPaint(g, r) unsafePerformIO
+    pref.cfLogger >>= (_ logValM doPaint(g, r)) unsafePerformIO
   }
    
   final private[editors] def doPaint(g: Graphics, r: Rectangle)
