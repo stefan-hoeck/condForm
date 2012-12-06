@@ -43,7 +43,8 @@ object BaseFormatNode extends NbNodeFunctions with NbChildrenFunctions {
       (editDialog withIn update map (_.success)) ⊹
       name(Formatted[A] locName _.format) ⊹
       contextRootsA(List("ContextActions/SingleFormatNode")) ⊹
-      iconBaseA("efa/cf/ui/single.png")
+      iconBaseA("efa/cf/ui/single.png") ⊹
+      ColorEditor.colorA(Formatted[A] background _.format)
 
     val fbOut: NodeOut[FB[A],ValSt[AF]] =
       (children(uniqueIdF(out)) ∙ ((_: FB[A]).baseFormat.fullList)) ⊹
@@ -52,7 +53,8 @@ object BaseFormatNode extends NbNodeFunctions with NbChildrenFunctions {
       clearNt ⊹
       nts ⊹
       contextRootsA(List("ContextActions/BaseFormatNode")) ⊹
-      iconBaseA("efa/cf/ui/base.png")
+      iconBaseA("efa/cf/ui/base.png") ⊹ 
+      ColorEditor.colorA(_.baseFormat.props.background)
 
     (children(uniqueIdF(fbOut)) ∙ ((_: AF) fullBases l)) ⊹
     nameA(locName) ⊹

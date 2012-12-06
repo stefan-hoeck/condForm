@@ -1,6 +1,7 @@
 package efa.cf.format
 
 import efa.core.{Default, Localization}
+import java.awt.Color
 import org.scalacheck.Arbitrary
 import scalaz._, Scalaz._, scalacheck.ScalaCheckBinding._
 
@@ -98,13 +99,22 @@ object AllFormats {
     def updateBluePrint (ff: FullFormat[FormatProps], f: FormatProps) =
       delBluePrint(ff) >> addBluePrint(f)
 
-    def delGCs (f: FullFormat[GradientColors]) =
-      gradientColorsM -= f.format.name void
+    def delGCs (n: String) = gradientColorsM -= n void
 
     def addGCs (f: GradientColors) = gradientColorsM += (f.name → f) void
 
-    def updateGCs (ff: FullFormat[GradientColors], f: GradientColors) =
-      delGCs(ff) >> addGCs(f)
+    def updateGCs (n: String, f: GradientColors ⇒ GradientColors) = for {
+      a   ← init[A]
+      ogc = gradientColorsM get a get n
+      _   ← delGCs(n)
+      _   ← ogc fold (f andThen addGCs, init[A].void)
+    } yield ()
+
+    def delColor (n: String, i: Int) =
+      updateGCs(n, GradientColors.colors mod (_.patch (i, Nil, 1), _))
+
+    def addColor (n: String, c: Color) =
+      updateGCs(n, GradientColors.colors mod (_ :+ c, _))
   }
 
   def registerBoolean (l: Localization)(a: AllFormats): AllFormats =

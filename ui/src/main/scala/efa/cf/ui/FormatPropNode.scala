@@ -15,7 +15,7 @@ object FormatPropNode extends NbNodeFunctions with NbChildrenFunctions {
     clearNt ⊹ 
     (addNtDialogEs(l.addBluePrint) ∙ (_.fpBluePrint)) ⊹
     nameA(loc.bluePrints) ⊹
-    contextRootsA(List("ContextActions/BaseFormatNode")) ⊹
+    contextRootsA(List("ContextActions/BluePrintsNode")) ⊹
     iconBaseA("efa/cf/ui/format.png")
 
   lazy val fpOut: NodeOut[FFF,ValSt[AllFormats]] =
@@ -23,7 +23,8 @@ object FormatPropNode extends NbNodeFunctions with NbChildrenFunctions {
     name(_.format.name) ⊹
     contextRootsA(List("ContextActions/SingleFormatNode")) ⊹
     iconBaseA("efa/cf/ui/format.png") ⊹
-    (editDialog[FFF,FormatProps] withIn (l.updateBluePrint(_,_).success))
+    (editDialog[FFF,FormatProps] withIn (l.updateBluePrint(_,_).success)) ⊹
+    ColorEditor.colorA(_.format.background)
 }
 
 // vim: set ts=2 sw=2 et:

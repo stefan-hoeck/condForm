@@ -1,13 +1,14 @@
 package efa.cf.format.spi
 
 import efa.cf.format.logic.Term
-import efa.core.{DisRes, ValRes}
+import efa.core.{DisRes, ValRes, Localization}
 import scalaz._, Scalaz._
 
 trait FormatLocal {
   def base: String
   def bad: String
   def bluePrint: String
+  def color: String
   def default: String
   def good: String
   def gradient: String
@@ -20,12 +21,15 @@ trait FormatLocal {
     invalidDoubleTermFormat(s).failureNel
 
   final def invalidRegexFail: DisRes[String] = invalidRegex.wrapNel.left
+
+  lazy val colorL = new Localization("color", color)
 }
 
 object FormatLocal extends FormatLocal {
   def base = "Formats"
   def bad = "Bad"
   def bluePrint = "Blueprint"
+  def color = "Color"
   def default = "Default"
   def good = "Good"
   def gradient = "Gradient"
