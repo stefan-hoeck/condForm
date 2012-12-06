@@ -1,5 +1,6 @@
 package efa.cf.ui.actions
 
+import efa.cf.format.Formats
 import efa.cf.ui.tc.FormatPanel
 import efa.nb.dialog.Input
 import efa.nb.actions.NbSystemAction
@@ -9,10 +10,12 @@ class EditFormattingAction
    extends NbSystemAction (efa.cf.ui.loc.editFormattingsAction) {
 
   def run = for {
-    p ← FormatPanel.create
+    p  ← FormatPanel.create
+    cs ← FormatPanel in p apply () 
     b ← Input(p)
-    _ ← if (b) p.applyChanges else IO.ioUnit
-    _ ← p.clear
+    _ ← if (b) cs._2.now >>= (_ fold (_ ⇒ IO.ioUnit, Formats.set))
+        else IO.ioUnit
+    _ ← cs._1.toList foldMap (_.disconnect)
   } yield ()
 
   override def iconResource = "efa/cf/ui/tc/format.png"

@@ -2,9 +2,10 @@ package efa.cf.ui.tc
 
 import efa.cf.format._
 import efa.cf.ui.BaseFormatNode
+import efa.core.ValRes
 import efa.nb.controller.StateTransFunctions
 import efa.nb.node.NbNode
-import efa.react.{Signal, Connectors}
+import efa.react.{Signal, Connectors, SIn}
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.text.DefaultEditorKit
@@ -13,9 +14,7 @@ import org.openide.explorer.view.OutlineView
 import org.openide.util.Lookup
 import scalaz._, Scalaz._, effect.IO
 
-class FormatPanel (
-  n: NbNode, s: Signal[AllFormats], cs: Connectors
-) extends JPanel 
+class FormatPanel (val n: NbNode) extends JPanel 
    with ExplorerManager.Provider 
    with Lookup.Provider {
 
@@ -35,17 +34,16 @@ class FormatPanel (
 
   override def getExplorerManager = mgr
   override def getLookup = lookup
-
-  private[ui] def applyChanges: IO[Unit] = s.now >>= Formats.set
-
-  private[ui] def clear: IO[Unit] = cs.toList foldMap (_.disconnect)
 }
 
 object FormatPanel extends StateTransFunctions {
   def create: IO[FormatPanel] = for {
     n ← NbNode.apply
-    p ← basicIn (BaseFormatNode.allOut set n)(Formats.now) go
-  } yield new FormatPanel(n, p._2, p._1)
+  } yield new FormatPanel(n)
+
+  def in (p: FormatPanel): SIn[ValRes[AllFormats]] =
+    basicIn (BaseFormatNode.allOut set p.n)(Formats.now) ∘ (_.success)
+
 }
 
 // vim: set ts=2 sw=2 et:
