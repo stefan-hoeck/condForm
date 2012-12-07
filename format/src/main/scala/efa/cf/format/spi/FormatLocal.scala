@@ -14,8 +14,10 @@ trait FormatLocal {
   def gradient: String
   def invalidDoubleTermFormat(s: String): String
   def invalidRegex: String
+  def lower: String
   def ok: String
   def transparent: String
+  def upper: String
   
   final def failDoubleTerm (s: String): ValRes[Term[Double]] = 
     invalidDoubleTermFormat(s).failureNel
@@ -39,8 +41,10 @@ object FormatLocal extends FormatLocal {
     "\nSee http://en.wikipedia.org/wiki/Regular_expression for further " ++
     "information."
 
+  def lower = "Lower"
   def ok = "OK"
   def transparent = "Default Transparent"
+  def upper = "Upper"
 }
 
 // vim: set ts=2 sw=2 et:

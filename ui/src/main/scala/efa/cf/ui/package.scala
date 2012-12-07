@@ -22,6 +22,9 @@ package object ui {
   implicit val DoubleFormatEditable: FFEditable[DoubleFormat] =
     DialogEditable.io(FPPanel.doubleP)(_.in)
 
+  implicit val GradientColorsEditable: FFEditable[GradientColors] =
+    DialogEditable.io(GradientColorsPanel.create)(_.in)
+
   implicit def FullBaseEditable[A] =
     DialogEditable.io(BaseFormatPanel.create[A])(_.in)
 

@@ -28,6 +28,8 @@ case class AllFormats (
 
   lazy val gradientColors = m2s(gradientColorsM) sortBy (_.name)
 
+  def colorNames = gradientColors map (_.name)
+
   lazy val gradientColorsFF =
     gradientColors ∘ (FullFormat("", _, gradientColorsM.keySet, false))
 
@@ -103,18 +105,21 @@ object AllFormats {
 
     def addGCs (f: GradientColors) = gradientColorsM += (f.name → f) void
 
-    def updateGCs (n: String, f: GradientColors ⇒ GradientColors) = for {
+    def modGCs (n: String, f: GradientColors ⇒ GradientColors) = for {
       a   ← init[A]
       ogc = gradientColorsM get a get n
       _   ← delGCs(n)
       _   ← ogc fold (f andThen addGCs, init[A].void)
     } yield ()
 
+    def updateGCs (ff: FullFormat[GradientColors], f: GradientColors) =
+      modGCs (ff.format.name, _ ⇒ f)
+
     def delColor (n: String, i: Int) =
-      updateGCs(n, GradientColors.colors mod (_.patch (i, Nil, 1), _))
+      modGCs(n, GradientColors.colors mod (_.patch (i, Nil, 1), _))
 
     def addColor (n: String, c: Color) =
-      updateGCs(n, GradientColors.colors mod (_ :+ c, _))
+      modGCs(n, GradientColors.colors mod (_ :+ c, _))
   }
 
   def registerBoolean (l: Localization)(a: AllFormats): AllFormats =

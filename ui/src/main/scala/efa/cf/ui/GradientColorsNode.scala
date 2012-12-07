@@ -13,15 +13,17 @@ object GradientColorsNode extends NbNodeFunctions with NbChildrenFunctions {
   lazy val l = Lens.self[AllFormats]
 
   lazy val rootOut: NodeOut[AllFormats,ValSt[AllFormats]] =
-    (children(uniqueIdF(fpOut)) ∙ ((_: AllFormats).gradientColorsFF)) ⊹
+    (children(uniqueIdF(ffgOut)) ∙ ((_: AllFormats).gradientColorsFF)) ⊹
     clearNt ⊹ 
+    (addNtDialogEs(l.addGCs) ∙ (_.gcBluePrint)) ⊹
     nameA(loc.gradients) ⊹
     contextRootsA(List("ContextActions/GradientsNode")) ⊹
     iconBaseA("efa/cf/ui/format.png")
 
-  lazy val fpOut: NodeOut[FFG,ValSt[AllFormats]] =
+  lazy val ffgOut: NodeOut[FFG,ValSt[AllFormats]] =
     (children(seqF(colorOut)) ∙ colorNameIdx) ⊹
     destroyEs(l delGCs _.format.name) ⊹ 
+    (editDialog[FFG,GradientColors] withIn (l.updateGCs(_,_).success)) ⊹
     name(_.format.name) ⊹
     contextRootsA(List("ContextActions/SingleGradientNode")) ⊹
     iconBaseA("efa/cf/ui/format.png") ⊹

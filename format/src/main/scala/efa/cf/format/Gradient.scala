@@ -8,7 +8,7 @@ import scala.xml.Node
 import scalaz._, Scalaz._, scalacheck.ScalaCheckBinding._
 
 case class Gradient (
-  name: String, nod: Int, bad: Double, good: Double
+  name: String, nod: Int, lower: Double, upper: Double, colors: String
 ) {
   import Gradient._
 
@@ -17,10 +17,11 @@ case class Gradient (
     case x => "%." + x + "f"
   }
   
-  def colorFor (d: Double): Color = colorFor(d, GradientColors.defaultColors)
-  
-  def colorFor (d: Double, cs: IndexedSeq[Color]): Color =
-    cFor(d, cs, bad, good)
+  def colorFor (d: Double, af: AllFormats): Color = {
+    val gcs = af.gradientColorsM getOrElse (colors, GradientColors.default)
+
+    cFor (d, gcs.colors, lower, upper)
+  }
 }
 
 object Gradient {
@@ -57,7 +58,7 @@ object Gradient {
   )
   val nodVal = Validators interval (0, 20)
 
-  lazy val default = Gradient(loc.gradient, 1, 0D, 100D)
+  lazy val default = Gradient(loc.gradient, 1, 0D, 100D, "")
 
   implicit lazy val GradientDefault: Default[Gradient] =
     Default default default
@@ -72,21 +73,24 @@ object Gradient {
     Gen.identifier ⊛ 
     Gen.choose(2, 20) ⊛ 
     Gen.choose(-1000D, 1000D) ⊛ 
-    Gen.choose(-1000D, 1000D) apply Gradient.apply
+    Gen.choose(-1000D, 1000D) ⊛
+    Gen.identifier apply Gradient.apply
   )
 
   implicit lazy val GradientToXml = new ToXml[Gradient] {
     def toXml (g: Gradient) =
       ("name" xml g.name) ++
       ("nod" xml g.nod) ++
-      ("bad" xml g.bad) ++
-      ("good" xml g.good)
+      ("lower" xml g.lower) ++
+      ("upper" xml g.upper) ++
+      ("colors" xml g.colors)
 
     def fromXml (ns: Seq[Node]) =
       ns.readTag[String]("name") ⊛
       ns.readTag[Int]("nod") ⊛
-      ns.readTag[Double]("bad") ⊛
-      ns.readTag[Double]("good") apply Gradient.apply
+      ns.readTag[Double]("lower") ⊛
+      ns.readTag[Double]("upper") ⊛
+      ns.readTag[String]("colors") apply Gradient.apply
   }
 
   val name: Gradient @> String =
@@ -95,11 +99,15 @@ object Gradient {
   val nod: Gradient @> Int =
     Lens.lensu((a,b) ⇒ a copy (nod = b), _.nod)
 
-  val bad: Gradient @> Double =
-    Lens.lensu((a,b) ⇒ a copy (bad = b), _.bad)
+  val lower: Gradient @> Double =
+    Lens.lensu((a,b) ⇒ a copy (lower = b), _.lower)
 
-  val good: Gradient @> Double =
-    Lens.lensu((a,b) ⇒ a copy (good = b), _.good)
+  val upper: Gradient @> Double =
+    Lens.lensu((a,b) ⇒ a copy (upper = b), _.upper)
+
+  val colors: Gradient @> String =
+    Lens.lensu((a,b) ⇒ a.copy(colors = b), _.colors)
+  
 }
 
 // vim: set ts=2 sw=2 et:

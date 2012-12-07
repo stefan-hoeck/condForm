@@ -33,14 +33,15 @@ private[editors] class DoubleEditor(name: String, v: Double, desc: String)
 
   private def doPaintG (g: Graphics, r: Rectangle): ValLogIO[Unit] = for {
     _     ← trace("Searching gradient for property " + name)
-    og    ← liftIO (Formats.now map (_.gradientsM get name))
+    af    ← liftIO(Formats.now)
+    og    = af.gradientsM get name
     _     ← og fold (
               gr ⇒ for {
                 c ← createComponent
                 _ ← trace("Gradient used for property " + name)
                 _ ← point {
                       c.text = gr.formatString format v
-                      c.background = gr colorFor v
+                      c.background = gr colorFor (v, af)
                       c.peer.setBounds(r)
                       c.peer.paint(g)
                     }
