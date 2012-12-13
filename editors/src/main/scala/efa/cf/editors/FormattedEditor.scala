@@ -61,8 +61,8 @@ abstract class FormattedEditor[A,F](
     for {
       c     ← createComponent
       m     ← liftIO (Formats.now map register)
-      _     ← m get name fold (
-                p ⇒ p.formats find (f matches (_, value)) fold (
+      _     ← m get name cata (
+                p ⇒ p.formats find (f matches (_, value)) cata (
                   dispF (_, c),
                   dispBase (p, c)
                 ),

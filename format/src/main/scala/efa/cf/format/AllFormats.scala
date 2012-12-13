@@ -85,13 +85,13 @@ object AllFormats {
   val stringsM: AllFormats @> Map[String,StringBase] =
     Lens.lensu((a,b) ⇒ a copy (stringsM = b), _.stringsM)
   
-  implicit def allFormatsLenses[A] (l: Lens[A,AllFormats]) = new {
-    lazy val bluePrintsM = l andThen AllFormats.bluePrintsM
-    lazy val boolsM = l andThen AllFormats.boolsM
-    lazy val doublesM = l andThen AllFormats.doublesM
-    lazy val gradientsM = l andThen AllFormats.gradientsM
-    lazy val gradientColorsM = l andThen AllFormats.gradientColorsM
-    lazy val stringsM = l andThen AllFormats.stringsM
+  implicit class Lenses[A] (val l: Lens[A,AllFormats]) extends AnyVal {
+    def bluePrintsM = l andThen AllFormats.bluePrintsM
+    def boolsM = l andThen AllFormats.boolsM
+    def doublesM = l andThen AllFormats.doublesM
+    def gradientsM = l andThen AllFormats.gradientsM
+    def gradientColorsM = l andThen AllFormats.gradientColorsM
+    def stringsM = l andThen AllFormats.stringsM
 
     def delBluePrint (f: FullFormat[FormatProps]) =
       bluePrintsM -= f.format.name void
@@ -109,7 +109,7 @@ object AllFormats {
       a   ← init[A]
       ogc = gradientColorsM get a get n
       _   ← delGCs(n)
-      _   ← ogc fold (f andThen addGCs, init[A].void)
+      _   ← ogc.fold(init[A].void)(f andThen addGCs)
     } yield ()
 
     def updateGCs (ff: FullFormat[GradientColors], f: GradientColors) =
@@ -142,7 +142,7 @@ object AllFormats {
       (UniqueNamed[A].setId(id) >>
       Formatted[A].setName(loc.locName)) exec Default[A].default
 
-    lens mod (m ⇒ m get id fold (_ ⇒ m, m + (id → newA)), a)
+    lens mod (m ⇒ m.get(id).fold(m + (id → newA))(_ ⇒ m), a)
   }
 }
 

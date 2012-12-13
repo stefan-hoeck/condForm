@@ -26,9 +26,9 @@ object FullBase {
   def templates[A]: FullBase[A] @> List[FormatProps] =
     Lens.lensu((a,b) ⇒ a copy (templates = b), _.templates)
   
-  implicit def FullBaseLenses[A,B](l: Lens[A,FullBase[B]]) = new {
-    lazy val baseFormat = l andThen FullBase.baseFormat
-    lazy val templates = l andThen FullBase.templates
+  implicit class Lenses[A,B](val l: Lens[A,FullBase[B]]) extends AnyVal {
+    def baseFormat = l andThen FullBase.baseFormat
+    def templates = l andThen FullBase.templates
   }
 
   implicit def FullBaseUniqueId[A] =

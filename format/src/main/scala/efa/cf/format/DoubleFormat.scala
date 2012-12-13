@@ -17,7 +17,7 @@ case class DoubleFormat (
 object DoubleFormat {
 
   private lazy val defaultTerm: Term[Double] = 
-    ">0 and <100".read[Term[Double]].toOption fold (identity, True())
+    ">0 and <100".read[Term[Double]].toOption.get
 
   lazy val default = DoubleFormat(!!!, defaultTerm, "%.3f")
 
@@ -61,10 +61,10 @@ object DoubleFormat {
   val formatString: DoubleFormat @> String =
     Lens.lensu((a,b) ⇒ a copy (formatString = b), _.formatString)
   
-  implicit def DoubleFormatLenses[A](l: Lens[A,DoubleFormat]) = new {
-    lazy val props = l andThen DoubleFormat.props
-    lazy val term = l andThen DoubleFormat.term
-    lazy val formatString = l andThen DoubleFormat.formatString
+  implicit class Lenses[A](val l: Lens[A,DoubleFormat]) extends AnyVal {
+    def props = l andThen DoubleFormat.props
+    def term = l andThen DoubleFormat.term
+    def formatString = l andThen DoubleFormat.formatString
   }
 }
 

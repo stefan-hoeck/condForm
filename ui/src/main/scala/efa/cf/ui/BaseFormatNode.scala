@@ -40,7 +40,7 @@ object BaseFormatNode extends NbNodeFunctions with NbChildrenFunctions {
 
     val out: NodeOut[FF[A],ValSt[AF]] = 
       destroyEs(delete) ⊹
-      (editDialog withIn update map (_.success)) ⊹
+      (editDialog[FF[A],A] withIn update map (_.success)) ⊹
       name(Formatted[A] locName _.format) ⊹
       contextRootsA(List("ContextActions/SingleFormatNode")) ⊹
       iconBaseA("efa/cf/ui/single.png") ⊹

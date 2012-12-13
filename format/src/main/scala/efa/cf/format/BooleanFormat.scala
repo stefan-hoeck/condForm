@@ -48,9 +48,9 @@ object BooleanFormat {
   val value: BooleanFormat @> Boolean =
     Lens.lensu((a,b) ⇒ a copy (value = b), _.value)
   
-  implicit def BooleanFormatLenses[A](l: Lens[A,BooleanFormat]) = new {
-    lazy val props = l andThen BooleanFormat.props
-    lazy val value = l andThen BooleanFormat.value
+  implicit class Lenses[A](val l: Lens[A,BooleanFormat]) extends AnyVal {
+    def props = l andThen BooleanFormat.props
+    def value = l andThen BooleanFormat.value
   }
 }
 

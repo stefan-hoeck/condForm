@@ -66,10 +66,10 @@ object FormatProps {
   val background: FormatProps @> Color =
     Lens.lensu((a,b) ⇒ a copy (background = b), _.background)
   
-  implicit def FormatPropsLenses[A](l: Lens[A,FormatProps]) = new {
-    lazy val name = l andThen FormatProps.name
-    lazy val foreground = l andThen FormatProps.foreground
-    lazy val background = l andThen FormatProps.background
+  implicit class Lenses[A](val l: Lens[A,FormatProps]) extends AnyVal {
+    def name = l andThen FormatProps.name
+    def foreground = l andThen FormatProps.foreground
+    def background = l andThen FormatProps.background
   }
 }
 

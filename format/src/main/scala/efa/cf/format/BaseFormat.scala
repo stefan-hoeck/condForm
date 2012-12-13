@@ -80,11 +80,11 @@ object BaseFormat {
   def fString[A]: BaseFormat[A] @> String =
     Lens.lensu((a,b) ⇒ a copy (fString = b), _.fString)
   
-  implicit def BaseFormatLenses[A,B](l: Lens[A,BaseFormat[B]]) = new {
-    lazy val id = l andThen BaseFormat.id
-    lazy val props = l andThen BaseFormat.props
-    lazy val formats = l andThen BaseFormat.formats
-    lazy val fString = l andThen BaseFormat.fString
+  implicit class Lenses[A,B](val l: Lens[A,BaseFormat[B]]) extends AnyVal {
+    def id = l andThen BaseFormat.id
+    def props = l andThen BaseFormat.props
+    def formats = l andThen BaseFormat.formats
+    def fString = l andThen BaseFormat.fString
   }
 }
 

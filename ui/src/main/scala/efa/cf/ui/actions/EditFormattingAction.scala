@@ -11,7 +11,7 @@ class EditFormattingAction
 
   def run = for {
     p  ← FormatPanel.create
-    cs ← FormatPanel in p apply () 
+    cs ← FormatPanel in p runIO () 
     b ← Input(p)
     _ ← if (b) cs._2.now >>= (_ fold (_ ⇒ IO.ioUnit, Formats.set))
         else IO.ioUnit

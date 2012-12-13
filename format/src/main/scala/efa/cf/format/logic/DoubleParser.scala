@@ -20,7 +20,7 @@ object DoubleParser extends JavaTokenParsers {
         case Success(t, _) ⇒ t.success
         case x             ⇒ efa.cf.format.loc failDoubleTerm x.toString
       }
-    } catch {case x ⇒ efa.cf.format.loc failDoubleTerm x.toString}
+    } catch {case x: Throwable ⇒ efa.cf.format.loc failDoubleTerm x.toString}
 
   private[logic] def expr: Parser[Term[Double]] = 
     trueTerm | nanTerm | term~rep(BinSymb~term) ^^ {

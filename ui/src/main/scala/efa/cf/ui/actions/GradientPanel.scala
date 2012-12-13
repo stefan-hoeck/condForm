@@ -48,7 +48,8 @@ class GradientPanel (
 
   //user input
   private def behavior: EIn[Unit] = {
-    def remove (o: OGrad) = o fold (Formats.removeGradient, IO.ioUnit)
+    def remove (o: OGrad) = o map Formats.removeGradient orZero
+
     def set (v: VGrad) = v fold (_ ⇒ IO.ioUnit, Formats.addGradient)
     val vOut: Out[VGrad] = Swing enabled setB contramap (_.isSuccess)
 
@@ -63,7 +64,7 @@ class GradientPanel (
 
     val oOut: Out[OGrad] =
       (Swing.enabled(removeB) ∙ ((_: OGrad).nonEmpty)) ⊹
-      (_ fold (gOut apply _, IO.ioUnit))
+      (_ map (gOut apply _) orZero)
 
     (Formats.formats.to(colorsOut).events map (_ ⇒ ())) ⊹
     (gradS to oOut on Swing.clicks(removeB) mapIO remove) ⊹ 

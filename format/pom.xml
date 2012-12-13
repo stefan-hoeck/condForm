@@ -17,6 +17,15 @@
 
   <dependencies>
     <dependency>
+      <groupId>efa.scala</groupId>
+      <artifactId>scalaCheckW</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>efa.scala</groupId>
+      <artifactId>scalaSwingW</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>efa</groupId>
       <artifactId>core</artifactId>
     </dependency>

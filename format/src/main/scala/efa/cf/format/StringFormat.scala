@@ -16,7 +16,7 @@ object StringFormat {
   lazy val default = StringFormat(!!!, ".*")
 
   lazy val regexV: EndoVal[String] = Kleisli(
-    s ⇒ try{s.r; s.right} catch {case _ ⇒ loc.invalidRegexFail}
+    s ⇒ try{s.r; s.right} catch {case _: Throwable ⇒ loc.invalidRegexFail}
   )
 
   implicit lazy val StringFormatDefault = Default default default
@@ -53,9 +53,9 @@ object StringFormat {
   val regex: StringFormat @> String =
     Lens.lensu((a,b) ⇒ a copy (regex = b), _.regex)
   
-  implicit def StringFormatLenses[A](l: Lens[A,StringFormat]) = new {
-    lazy val props = l andThen StringFormat.props
-    lazy val regex = l andThen StringFormat.regex
+  implicit class Lenses[A](val l: Lens[A,StringFormat]) extends AnyVal {
+    def props = l andThen StringFormat.props
+    def regex = l andThen StringFormat.regex
   }
 }
 

@@ -35,8 +35,8 @@ private[editors] class DoubleEditor(name: String, v: Double, desc: String)
     _     ← trace("Searching gradient for property " + name)
     af    ← liftIO(Formats.now)
     og    = af.gradientsM get name
-    _     ← og fold (
-              gr ⇒ for {
+    _     ← og.fold (doPaint(g, r))( gr ⇒
+              for {
                 c ← createComponent
                 _ ← trace("Gradient used for property " + name)
                 _ ← point {
@@ -45,8 +45,7 @@ private[editors] class DoubleEditor(name: String, v: Double, desc: String)
                       c.peer.setBounds(r)
                       c.peer.paint(g)
                     }
-                } yield (),
-              doPaint(g, r)
+              } yield ()
             )
   } yield ()
 }
