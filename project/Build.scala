@@ -41,15 +41,15 @@ object Dependencies {
   val util = "efa"
   val react = "efa.react"
 
-  val efaCore = util %% "core" % utilVersion changing
+  val efaCore = util %% "efa-core" % utilVersion changing
 
-  val efaIo = util %% "io" % utilVersion changing
+  val efaIo = util %% "efa-io" % utilVersion changing
 
-  val efaNb = util %% "nb" % utilVersion changing
+  val efaNb = util %% "efa-nb" % utilVersion changing
 
-  val efaReact = react %% "core" % reactVersion changing
+  val efaReact = react %% "react-core" % reactVersion changing
 
-  val efaReactSwing = react %% "swing" % reactVersion changing
+  val efaReactSwing = react %% "react-swing" % reactVersion changing
 
   val nbV = "RELEASE71"
 
@@ -100,13 +100,13 @@ object UtilBuild extends Build {
   ) aggregate (editors, format, ui)
   
   lazy val editors = Project (
-    "editors",
+    "cf-editors",
     file("editors"),
     settings = addDeps (scalazCheckET ++ Seq(efaCore, efaIo, efaNb))
   ) dependsOn (format)
   
   lazy val format = Project (
-    "format",
+    "cf-format",
     file("format"),
     settings =
     addDeps (scalazCheckET ++ Seq(efaCore, efaIo, efaReact, nbModules)) :+ (
@@ -115,7 +115,7 @@ object UtilBuild extends Build {
   )
   
   lazy val ui = Project (
-    "ui",
+    "cf-ui",
     file("ui"),
     settings = addDeps (scalazCheckET ++ Seq(efaCore, efaIo, efaNb, efaReact, nbOptions))
   ) dependsOn (format, editors)
