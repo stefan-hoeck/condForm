@@ -22,6 +22,8 @@ package object format {
   val stringBase = "efa_cf_stringBase"
   val stringFormat = "efa_cf_stringFormat"
 
+  private[format] final val Version = "2.0.0"
+
   type Colors = IndexedSeq[Color]
 
   private[format] implicit val ColorEqual: Equal[Color] =

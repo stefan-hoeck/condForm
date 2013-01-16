@@ -19,8 +19,6 @@ object Formats {
   implicit lazy val DoubleBaseToXml =
     BaseFormat.baseFormatToXml[DoubleFormat](doubleFormat)
 
-  private[format] lazy val version = "2.0.0-SNAPSHOT"
-
   private[this] lazy val formatsVar: IOCached[Var[AllFormats]] =
     IOCached(loadAll() >>= (Signal newVar _))
 
@@ -127,10 +125,10 @@ object Formats {
     else (0 until i).toList traverse loadPair map (_.toMap)
   }
 
-  private[this] def countLbl(l: String) = l + version + "Count"
+  private[this] def countLbl(l: String) = s"$l $Version Count"
 
   private[this] def itemLbl(l: String, i: Int) =
-    l + version + "Item" + i.toString
+   s"$l $Version Item $i"
 
   private[this] def logValM[A:Monoid](io: ValLogIO[A]): IO[A] =
     pref.cfLogger >>= (_ logValM io)

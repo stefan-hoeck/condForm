@@ -6,7 +6,7 @@ object BuildSettings {
 
   val sv = "2.10.0"
   val buildOrganization = "efa.cf"
-  val buildVersion = "2.0.0-SNAPSHOT"
+  val buildVersion = "2.0.0"
   val buildScalaVersion = sv
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
@@ -36,20 +36,17 @@ object Resolvers {
 object Dependencies {
   import BuildSettings.sv
 
-  val utilVersion = "0.1.0-SNAPSHOT"
-  val reactVersion = "0.1.0-SNAPSHOT"
+  val utilVersion = "0.1.0"
+  val reactVersion = "0.1.0"
   val util = "efa"
   val react = "efa.react"
 
-  val efaCore = util %% "efa-core" % utilVersion changing
+  val efaCore = util %% "efa-core" % utilVersion
+  val efaIo = util %% "efa-io" % utilVersion
+  val efaNb = util %% "efa-nb" % utilVersion
 
-  val efaIo = util %% "efa-io" % utilVersion changing
-
-  val efaNb = util %% "efa-nb" % utilVersion changing
-
-  val efaReact = react %% "react-core" % reactVersion changing
-
-  val efaReactSwing = react %% "react-swing" % reactVersion changing
+  val efaReact = react %% "react-core" % reactVersion
+  val efaReactSwing = react %% "react-swing" % reactVersion
 
   val nbV = "RELEASE71"
 
