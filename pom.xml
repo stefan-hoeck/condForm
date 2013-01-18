@@ -87,7 +87,7 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>nbm-maven-plugin</artifactId>
           <configuration>
-            <cluster>rpgTool</cluster>
+            <cluster>condForm</cluster>
           </configuration>
         </plugin>
       </plugins>
