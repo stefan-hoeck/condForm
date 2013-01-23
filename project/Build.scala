@@ -6,7 +6,7 @@ object BuildSettings {
 
   val sv = "2.10.0"
   val buildOrganization = "efa.cf"
-  val buildVersion = "2.0.0"
+  val buildVersion = "2.0.1"
   val buildScalaVersion = sv
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
@@ -36,7 +36,7 @@ object Resolvers {
 object Dependencies {
   import BuildSettings.sv
 
-  val utilVersion = "0.1.0"
+  val utilVersion = "0.1.1"
   val reactVersion = "0.1.0"
   val util = "efa"
   val react = "efa.react"
