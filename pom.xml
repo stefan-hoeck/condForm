@@ -71,7 +71,7 @@
       <dependency>
         <groupId>efa</groupId>
         <artifactId>efa-nb</artifactId>
-        <version>${util.version}</version>
+        <version>0.1.2</version>
       </dependency>
       <dependency>
         <groupId>org.efa</groupId>
