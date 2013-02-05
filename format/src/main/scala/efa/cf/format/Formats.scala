@@ -40,17 +40,17 @@ object Formats {
   def registerString(l: Localization): IO[Unit] = 
     mod(AllFormats registerString l)
 
-  def addGradient(g: Gradient): IO[Unit] = logValM (
+  def addGradient(g: Gradient): IO[Unit] = logValZ (
     trace("Adding gradient: " + g.toString) >>
-    liftIO(mod(AllFormats.gradientsM mod (_ + (g.name → g), _)))
+    liftIO(mod(L[AllFormats].gradientsM mod (_ + (g.name → g), _)))
   )
 
   def removeGradient(g: Gradient): IO[Unit] = 
-    mod(AllFormats.gradientsM mod (_ - g.name, _))
+    mod(L[AllFormats].gradientsM mod (_ - g.name, _))
 
   private[format] def loadAll (
     pref: ValLogIO[Preferences] = prefs
-  ): IO[AllFormats] = logValZ (
+  ): IO[AllFormats] = logValD (
     ^^^^^(load[FormatProps](formatProps, pref, FormatProps.defaults),
       load[BooleanBase](booleanBase, pref),
       load[DoubleBase](doubleBase, pref),
@@ -117,12 +117,10 @@ object Formats {
     def load (i: Int): ValRes[A] =
       ToXml[A] fromXml (XML loadString p.get(itemLbl(label, i), ""))
 
-    def loadPair (i: Int): ValRes[(String,A)] = load(i) map idPair[A]
-
     val i = p.getInt(countLbl(label), -1)
 
     if (i < 0) default.success
-    else (0 until i).toList traverse loadPair map (_.toMap)
+    else (0 until i).toList traverse load map StringId[A].idMap
   }
 
   private[this] def countLbl(l: String) = s"$l $Version Count"
@@ -130,11 +128,11 @@ object Formats {
   private[this] def itemLbl(l: String, i: Int) =
    s"$l $Version Item $i"
 
-  private[this] def logValM[A:Monoid](io: ValLogIO[A]): IO[A] =
-    pref.cfLogger >>= (_ logValM io)
-
-  private[this] def logValZ[A:Default](io: ValLogIO[A]): IO[A] =
+  private[this] def logValZ[A:Monoid](io: ValLogIO[A]): IO[A] =
     pref.cfLogger >>= (_ logValZ io)
+
+  private[this] def logValD[A:Default](io: ValLogIO[A]): IO[A] =
+    pref.cfLogger >>= (_ logValD io)
 }
 
 // vim: set ts=2 sw=2 et:

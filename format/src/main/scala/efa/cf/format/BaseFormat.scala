@@ -11,7 +11,7 @@ case class BaseFormat[A] (
   id: String, props: FormatProps, formats: List[A], fString: String
 ) {
   def names (implicit N:Formatted[A]): Set[String] =
-    formats map N.locName toSet
+    formats map N.name toSet
 
   def fullList (implicit N:Formatted[A]): List[FullFormat[A]] =
     fullFormats(formats, false)
@@ -20,7 +20,7 @@ case class BaseFormat[A] (
   (implicit N:Formatted[A]): List[FullFormat[A]] = {
     val ns = names
 
-    as sortBy N.locName map (FullFormat(id, _, ns, isNew))
+    as sortBy N.name map (FullFormat(id, _, ns, isNew))
   }
    
 }
@@ -34,9 +34,9 @@ object BaseFormat {
     BaseFormat[DoubleFormat](loc.base, !!!, Nil, "%.3f"))
 
   implicit def BaseFormatFormatted[A] = 
-    new Formatted[BaseFormat[A]] with UniqueNamed[BaseFormat[A]] {
+    new Formatted[BaseFormat[A]] with UniqueIdL[BaseFormat[A],String] {
       def formatPropsL = BaseFormat.props[A]
-      def uniqueNameL = BaseFormat.id[A]
+      def idL = BaseFormat.id[A]
     }
 
   implicit def BaseFormatEqual[A:Equal]: Equal[BaseFormat[A]] =

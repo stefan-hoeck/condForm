@@ -1,30 +1,37 @@
 package efa.cf
 
-import java.awt.{Color}
 import efa.cf.format.spi.{FormatLocal, CfPreferences}
 import efa.core._, Efa._
+import java.awt.{Color}
 import org.scalacheck._, Arbitrary.arbitrary
 import scalaz._, Scalaz._, effect._
+import shapeless.{HNil, ::}
 
 package object format {
+
+  type BooleanBase = BaseFormat[BooleanFormat]
+  type DoubleBase = BaseFormat[DoubleFormat]
+  type Colors = IndexedSeq[Color]
+  type FpBluePrint = FormatProps :: Boolean :: AllFormats :: HNil
+  type GcBluePrint = GradientColors :: Boolean :: AllFormats :: HNil
+  type StringBase = BaseFormat[StringFormat]
+  type StringMap[+A] = Map[String,A]
 
   lazy val loc = Service.unique[FormatLocal](FormatLocal)
 
   private[cf] lazy val pref = Service.unique[CfPreferences](CfPreferences)
 
-  val formatProps = "efa_cf_formatProps"
-  val booleanFormat = "efa_cf_booleanFormat"
-  val booleanBase = "efa_cf_booleanBase"
-  val doubleBase = "efa_cf_doubleBase"
-  val doubleFormat = "efa_cf_doubleFormat"
-  val gradient = "efa_cf_gradient"
-  val gradientColors = "efa_cf_gradientColors"
-  val stringBase = "efa_cf_stringBase"
-  val stringFormat = "efa_cf_stringFormat"
+  final val formatProps = "efa_cf_formatProps"
+  final val booleanFormat = "efa_cf_booleanFormat"
+  final val booleanBase = "efa_cf_booleanBase"
+  final val doubleBase = "efa_cf_doubleBase"
+  final val doubleFormat = "efa_cf_doubleFormat"
+  final val gradient = "efa_cf_gradient"
+  final val gradientColors = "efa_cf_gradientColors"
+  final val stringBase = "efa_cf_stringBase"
+  final val stringFormat = "efa_cf_stringFormat"
 
   private[format] final val Version = "2.0.0"
-
-  type Colors = IndexedSeq[Color]
 
   private[format] implicit val ColorEqual: Equal[Color] =
     Equal.equalBy(_.getRGB)
@@ -67,35 +74,15 @@ package object format {
     def id (a: A) = i(a)
   }
 
-  type BooleanBase = BaseFormat[BooleanFormat]
-  type StringBase = BaseFormat[StringFormat]
-  type DoubleBase = BaseFormat[DoubleFormat]
+  def id[A:StringId](a: A): String = StringId[A] id a
 
-  implicit lazy val BooleanFormatter = new Formatter[Boolean,BooleanFormat] {
-      def matches (f: BooleanFormat, b: Boolean) = f matches b
-      def formatPropsS (f: BooleanFormat) = f.props
-    }
-
-  implicit lazy val StringFormatter = new Formatter[String,StringFormat] {
-      def matches (f: StringFormat, b: String) = f matches b
-      def formatPropsS (f: StringFormat) = f.props
-    }
-
-  implicit lazy val DoubleFormatter = new Formatter[Double,DoubleFormat] {
-      def matches (f: DoubleFormat, b: Double) = f matches b
-      def formatPropsS (f: DoubleFormat) = f.props
-    }
-
-  type StringId[A] = UniqueId[A,String]
-
-  def id[A:StringId](a: A): String = implicitly[StringId[A]] id a
-
-  def idPair[A:StringId](a: A): (String,A) = id(a) → a
-
-  def mapGen[A:Arbitrary:StringId]: Gen[Map[String,A]] = for {
-    i  ← Gen choose (1, 10)
-    as ← Gen listOfN (i, arbitrary[A]) 
-  } yield as map idPair[A] toMap
+  implicit def mapArb[A:Arbitrary:StringId]: Arbitrary[StringMap[A]] = 
+    Arbitrary(
+      for {
+        i  ← Gen choose (1, 10)
+        as ← Gen listOfN (i, arbitrary[A]) 
+      } yield StringId[A] idMap as
+    )
 }
 
 // vim: set ts=2 sw=2 et:

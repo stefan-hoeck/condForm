@@ -1,6 +1,6 @@
 package efa.cf.format
 
-import efa.core.UniqueId
+import efa.core.{UniqueId, StringId}
 import scalaz.Show
 
 case class FullFormat[A] (

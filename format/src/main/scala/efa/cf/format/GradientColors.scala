@@ -34,8 +34,8 @@ object GradientColors {
   }
 
   implicit lazy val GradientColorsUniqueNamed =
-    new UniqueNamed[GradientColors] {
-      def uniqueNameL = GradientColors.name
+    new UniqueIdL[GradientColors,String] {
+      def idL = GradientColors.name
     }
   
   val name: GradientColors @> String =

@@ -22,9 +22,12 @@ object StringFormat {
   implicit lazy val StringFormatDefault = Default default default
 
   implicit lazy val StringFormatFormatted =
-    new Formatted[StringFormat] with UniqueNamed[StringFormat] {
-      val uniqueNameL = StringFormat.props.name
+    new Formatted[StringFormat]
+    with UniqueIdL[StringFormat,String] 
+    with Formatter[String,StringFormat] {
+      val idL = StringFormat.props.name
       val formatPropsL = StringFormat.props
+      def matches (f: StringFormat, b: String) = f matches b
     }
 
   implicit lazy val StringFormatEqual: Equal[StringFormat] =

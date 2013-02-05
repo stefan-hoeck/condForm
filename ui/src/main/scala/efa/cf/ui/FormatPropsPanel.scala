@@ -10,7 +10,7 @@ import scalaz._, Scalaz._, effect.IO
 abstract class FPPanel[A:Formatted] (ff: FF[A]) extends DialogPanel {
   protected def a: A = ff.format
 
-  val nameC = textField(Formatted[A] locName a)
+  val nameC = textField(Formatted[A] name a)
   val fore = new ColorPanel(Formatted[A] foreground a)
   val back = new ColorPanel(Formatted[A] background a)
 

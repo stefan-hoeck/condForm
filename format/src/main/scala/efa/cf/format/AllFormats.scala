@@ -1,9 +1,10 @@
 package efa.cf.format
 
-import efa.core.{Default, Localization}
+import efa.core._, Efa._
 import java.awt.Color
 import org.scalacheck.Arbitrary
 import scalaz._, Scalaz._, scalacheck.ScalaCheckBinding._
+import shapeless.{::, HNil, Iso, Nat}, Nat._
 
 /**
  * Contains all user-defined formattings as Maps from String
@@ -12,86 +13,54 @@ import scalaz._, Scalaz._, scalacheck.ScalaCheckBinding._
  * the UI
  */
 case class AllFormats (
-  bluePrintsM: Map[String,FormatProps], 
-  boolsM: Map[String,BooleanBase],
-  doublesM: Map[String,DoubleBase], 
-  gradientsM: Map[String,Gradient],
-  gradientColorsM: Map[String,GradientColors],
-  stringsM: Map[String,StringBase]
+  bluePrintsM: StringMap[FormatProps], 
+  boolsM: StringMap[BooleanBase],
+  doublesM: StringMap[DoubleBase], 
+  gradientsM: StringMap[Gradient],
+  gradientColorsM: StringMap[GradientColors],
+  stringsM: StringMap[StringBase]
 ) {
   import AllFormats._
 
-  lazy val bluePrints = m2s(bluePrintsM) sortBy (_.name)
+  lazy val fpBluePrints: List[FpBluePrint] =
+    Efa.mapValues(bluePrintsM)
+       .sortBy { _.name }
+       .map { _ :: false :: this :: HNil }
 
-  lazy val bluePrintsFF =
-    bluePrints ∘ (FullFormat("", _, bluePrintsM.keySet, false))
-
-  lazy val gradientColors = m2s(gradientColorsM) sortBy (_.name)
+  lazy val gradientColors = Efa mapValues gradientColorsM sortBy { _.name }
 
   def colorNames = gradientColors map (_.name)
 
-  lazy val gradientColorsFF =
-    gradientColors ∘ (FullFormat("", _, gradientColorsM.keySet, false))
+  lazy val gcBluePrints: List[GcBluePrint] =
+    Efa.mapValues(gradientColorsM)
+       .sortBy { _.name }
+       .map { _ :: false :: this :: HNil }
 
-  def gcBluePrint: FullFormat[GradientColors] = FullFormat (
-    "", GradientColors.bluePrint, gradientColorsM.keySet, true
-  )
+  lazy val gcBluePrint: GcBluePrint =
+    GradientColors.bluePrint :: true :: this :: HNil
 
-  def fpBluePrint: FullFormat[FormatProps] = FullFormat(
-    "", FormatProps.bluePrint, bluePrintsM.keySet, true
-  )
-
-  private def m2s[A](m: Map[String,A]) = m.toList map (_._2)
-  
-  def fullBases[A](l: AllFormats @> Map[String,BaseFormat[A]]) =
-    (l get this).toList map (p ⇒ FullBase(p._2, bluePrints))
+  lazy val fpBluePrint: FpBluePrint =
+    FormatProps.bluePrint :: false :: this :: HNil
 }
 
 object AllFormats {
+  implicit val AfIso = Iso.hlist(AllFormats.apply _, AllFormats.unapply _)
+  implicit val AfEqual: Equal[AllFormats] = Shapeless.ccEqual
+  implicit val AfArb: Arbitrary[AllFormats] = Shapeless.ccArbitrary
+  private val AfLens = SLens[AllFormats]
+
   private def e[A,B]: Map[A,B] = Map.empty
 
-  val default = AllFormats(FormatProps.defaults, e, e, e, e, e)
-
-  implicit val AllFormatsDefault = Default default default
-
-  implicit val AllFormatsEqual = Equal.equalA[AllFormats]
-
-  implicit val AllFormatsArbitrary: Arbitrary[AllFormats] = Arbitrary(
-    ^^^^^(
-      mapGen[FormatProps],
-      mapGen[BooleanBase],
-      mapGen[DoubleBase],
-      mapGen[Gradient],
-      mapGen[GradientColors],
-      mapGen[StringBase]
-    )(AllFormats.apply)
-  )
-
-  val bluePrintsM: AllFormats @> Map[String,FormatProps] =
-    Lens.lensu((a,b) ⇒ a copy (bluePrintsM = b), _.bluePrintsM)
-
-  val boolsM: AllFormats @> Map[String,BooleanBase] =
-    Lens.lensu((a,b) ⇒ a copy (boolsM = b), _.boolsM)
-
-  val doublesM: AllFormats @> Map[String,DoubleBase] =
-    Lens.lensu((a,b) ⇒ a copy (doublesM = b), _.doublesM)
-  
-  val gradientsM: AllFormats @> Map[String,Gradient] =
-    Lens.lensu((a,b) ⇒ a copy (gradientsM = b), _.gradientsM)
-  
-  val gradientColorsM: AllFormats @> Map[String,GradientColors] =
-    Lens.lensu((a,b) ⇒ a copy (gradientColorsM = b), _.gradientColorsM)
-  
-  val stringsM: AllFormats @> Map[String,StringBase] =
-    Lens.lensu((a,b) ⇒ a copy (stringsM = b), _.stringsM)
+  implicit val AfDefault = 
+    Default default AllFormats(FormatProps.defaults, e, e, e, e, e)
   
   implicit class Lenses[A] (val l: Lens[A,AllFormats]) extends AnyVal {
-    def bluePrintsM = l andThen AllFormats.bluePrintsM
-    def boolsM = l andThen AllFormats.boolsM
-    def doublesM = l andThen AllFormats.doublesM
-    def gradientsM = l andThen AllFormats.gradientsM
-    def gradientColorsM = l andThen AllFormats.gradientColorsM
-    def stringsM = l andThen AllFormats.stringsM
+    def bluePrintsM = l andThen AfLens.at(_0)
+    def boolsM = l andThen AfLens.at(_1)
+    def doublesM = l andThen AfLens.at(_2)
+    def gradientsM = l andThen AfLens.at(_3)
+    def gradientColorsM = l andThen AfLens.at(_4)
+    def stringsM = l andThen AfLens.at(_5)
 
     def delBluePrint (f: FullFormat[FormatProps]) =
       bluePrintsM -= f.format.name void
@@ -123,23 +92,23 @@ object AllFormats {
   }
 
   def registerBoolean (l: Localization)(a: AllFormats): AllFormats =
-    tryRegister(boolsM, l)(a)
+    tryRegister(L[AllFormats].boolsM, l)(a)
 
   def registerDouble (l: Localization)(a: AllFormats): AllFormats =
-    tryRegister(doublesM, l)(a)
+    tryRegister(L[AllFormats].doublesM, l)(a)
 
   def registerString (l: Localization)(a: AllFormats): AllFormats =
-    tryRegister(stringsM, l)(a)
+    tryRegister(L[AllFormats].stringsM, l)(a)
 
   def addGradient (g: Gradient)(a: AllFormats): AllFormats =
-    (gradientsM += (g.name → g)) exec a
+    (L[AllFormats].gradientsM += (g.name → g)) exec a
 
-  private def tryRegister[A:Default:UniqueNamed:Formatted] (
+  private def tryRegister[A:Default:StringIdL:Formatted] (
     lens: AllFormats @> Map[String,A], loc: Localization
   )(a: AllFormats): AllFormats = {
     val id = loc.name
     def newA = 
-      (UniqueNamed[A].setId(id) >>
+      ((StringIdL[A].idL := id) >>
       Formatted[A].setName(loc.locName)) exec Default[A].default
 
     lens mod (m ⇒ m.get(id).fold(m + (id → newA))(_ ⇒ m), a)

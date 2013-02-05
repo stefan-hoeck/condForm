@@ -40,8 +40,8 @@ object FormatProps {
   }
 
   implicit lazy val FormatPropsFormatted =
-    new Formatted[FormatProps] with UniqueNamed[FormatProps] {
-      val uniqueNameL = FormatProps.name
+    new Formatted[FormatProps] with UniqueIdL[FormatProps,String] {
+      val idL = FormatProps.name
       val formatPropsL = Lens.self[FormatProps]
     }
   

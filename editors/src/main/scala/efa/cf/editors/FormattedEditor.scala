@@ -9,9 +9,13 @@ import scala.swing.Component
 import scalaz._, Scalaz._, effect.IO
 
 abstract class FormattedEditor[A,F](
-  name: String, val value: A, description: String
-)(implicit f: Formatter[A,F]) 
-  extends PropertyEditorSupport with ValLogIOFunctions {
+    name: String,
+    val value: A,
+    description: String)(
+    implicit f: Formatter[A,F],
+    h: HasFormatProps[F]) 
+  extends PropertyEditorSupport
+  with ValLogIOFunctions {
 
   type Comp <: Component
   type BF = BaseFormat[F]
@@ -33,7 +37,7 @@ abstract class FormattedEditor[A,F](
   override def isPaintable = true
 
   override def paintValue(g: Graphics, r: Rectangle) {
-    pref.cfLogger >>= (_ logValM doPaint(g, r)) unsafePerformIO
+    pref.cfLogger >>= (_ logValZ doPaint(g, r)) unsafePerformIO
   }
    
   final private[editors] def doPaint(g: Graphics, r: Rectangle)
@@ -52,7 +56,7 @@ abstract class FormattedEditor[A,F](
 
     def dispF (form: F, c: Comp) = for {
        _     ← trace("Format %s used for %s" format (form.toString, name))
-       props = f formatPropsS form
+       props = h formatProps form
        _     ← point(c.foreground = props.foreground)
        _     ← point(c.background = props.background)
        _     ← displayFormatted(form, c)

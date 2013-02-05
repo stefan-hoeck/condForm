@@ -63,8 +63,8 @@ object Gradient {
   implicit lazy val GradientDefault: Default[Gradient] =
     Default default default
 
-  implicit lazy val GradientUniqueId = new UniqueNamed[Gradient]{
-    val uniqueNameL = Gradient.name
+  implicit lazy val GradientUniqueId = new UniqueIdL[Gradient,String]{
+    val idL = Gradient.name
   }
 
   implicit lazy val GradientEqual: Equal[Gradient] = Equal.equalA

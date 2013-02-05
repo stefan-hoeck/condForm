@@ -22,9 +22,12 @@ object DoubleFormat {
   lazy val default = DoubleFormat(!!!, defaultTerm, "%.3f")
 
   implicit lazy val DoubleFormatFormatted =
-    new Formatted[DoubleFormat] with UniqueNamed[DoubleFormat] {
-      val uniqueNameL = DoubleFormat.props.name
+    new Formatted[DoubleFormat]
+    with UniqueIdL[DoubleFormat,String] 
+    with Formatter[Double,DoubleFormat] {
+      val idL = DoubleFormat.props.name
       val formatPropsL = DoubleFormat.props
+      def matches (f: DoubleFormat, b: Double) = f matches b
     }
 
   implicit lazy val DoubleFormatDefault = Default default default

@@ -1,35 +1,30 @@
 package efa.cf.format
 
 import efa.core._, Efa._
-import java.awt.{Color}
-import org.scalacheck.{Gen, Arbitrary}, Arbitrary.arbitrary
+import org.scalacheck.Arbitrary
 import scala.xml.Node
 import scala.swing.Label
-import scalaz._, Scalaz._, scalacheck.ScalaCheckBinding._
+import scalaz._, Scalaz._
+import shapeless.Iso
 
 case class BooleanFormat (props: FormatProps, value: Boolean) {
   def matches (b: Boolean) = b ≟ value
 }
 
 object BooleanFormat {
-
-  lazy val default = BooleanFormat(!!!, true)
-
-  implicit lazy val BooleanFormatDefault = Default default default
+  implicit val BfIso = Iso.hlist(BooleanFormat.apply _, BooleanFormat.unapply _)
+  implicit val BfEqual: Equal[BooleanFormat] = Shapeless.ccEqual
+  implicit val BfArb: Arbitrary[BooleanFormat] = Shapeless.ccArbitrary
+  implicit val BfDefault = Default default BooleanFormat(!!!, true)
 
   implicit lazy val BooleanFormatFormatted =
-    new Formatted[BooleanFormat] with UniqueNamed[BooleanFormat] {
-      val uniqueNameL = BooleanFormat.props.name
+    new Formatted[BooleanFormat]
+    with UniqueIdL[BooleanFormat,String] 
+    with Formatter[Boolean,BooleanFormat] {
+      val idL = BooleanFormat.props.name
       val formatPropsL = BooleanFormat.props
+      def matches (f: BooleanFormat, b: Boolean) = f matches b
     }
-
-  implicit lazy val BooleanFormatEqual: Equal[BooleanFormat] =
-    Equal.equalBy(f ⇒ (f.props, f.value))
-
-  implicit lazy val BooleanFormatArbitrary = Arbitrary(
-    arbitrary[FormatProps] ⊛ 
-    arbitrary[Boolean] apply BooleanFormat.apply
-  )
 
   implicit lazy val BooleanFormatToXml = new ToXml[BooleanFormat] {
     def toXml (f: BooleanFormat) =
