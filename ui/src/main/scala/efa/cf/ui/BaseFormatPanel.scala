@@ -5,32 +5,32 @@ import efa.nb.dialog.DialogPanel
 import efa.cf.format._
 import scalaz._, Scalaz._, effect.IO
 
-class BaseFormatPanel[A] private (val fb: FullBase[A])
-   extends DialogPanel {
-
-  def bf: BaseFormat[A] = fb.baseFormat
-
-  val fore: ColorPanel = new ColorPanel(bf.props.foreground)
-  val back: ColorPanel = new ColorPanel(bf.props.background)
-  val fStringC = textField(bf.fString)
-    
-  lazy val in: VSIn[BaseFormat[A]] = ^^^(
-    bf.id.η[VSIn],
-    ^^(fore.colorIn, back.colorIn, bf.props.name.η[VSIn])(FormatProps.apply),
-    bf.formats.η[VSIn],
-    stringIn(fStringC)
-  )(BaseFormat.apply)
-
-  (loc.formatString beside fStringC) above
-  (loc.foreground beside fore) above
-  (loc.background beside back) add()
-
-  setWidth(400)
-}
-
-object BaseFormatPanel {
-  def create[A] (f: FullBase[A]): IO[BaseFormatPanel[A]] =
-    IO(new BaseFormatPanel(f))
-}
+//class BaseFormatPanel[A] private (val fb: FullBase[A])
+//   extends DialogPanel {
+//
+//  def bf: BaseFormat[A] = fb.baseFormat
+//
+//  val fore: ColorPanel = new ColorPanel(bf.props.foreground)
+//  val back: ColorPanel = new ColorPanel(bf.props.background)
+//  val fStringC = textField(bf.fString)
+//    
+//  lazy val in: VSIn[BaseFormat[A]] = ^^^(
+//    bf.id.η[VSIn],
+//    ^^(fore.colorIn, back.colorIn, bf.props.name.η[VSIn])(FormatProps.apply),
+//    bf.formats.η[VSIn],
+//    stringIn(fStringC)
+//  )(BaseFormat.apply)
+//
+//  (loc.formatString beside fStringC) above
+//  (loc.foreground beside fore) above
+//  (loc.background beside back) add()
+//
+//  setWidth(400)
+//}
+//
+//object BaseFormatPanel {
+//  def create[A] (f: FullBase[A]): IO[BaseFormatPanel[A]] =
+//    IO(new BaseFormatPanel(f))
+//}
 
 // vim: set ts=2 sw=2 et:

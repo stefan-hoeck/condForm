@@ -47,14 +47,14 @@ abstract class FormattedEditor[A,F](
       _ ← displayUnformatted(c)
     } yield ()
 
-    def dispBase (bf: BF, c: Comp) = for {
+    def dispBase (c: Comp)(bf: BF) = for {
        _     ← trace("Base format used for property " + name)
        _     ← point(c.foreground = bf.props.foreground)
        _     ← point(c.background = bf.props.background)
        _     ← displayBaseFormatted(bf, c)
     } yield ()
 
-    def dispF (form: F, c: Comp) = for {
+    def dispF (c: Comp)(form: F) = for {
        _     ← trace("Format %s used for %s" format (form.toString, name))
        props = h formatProps form
        _     ← point(c.foreground = props.foreground)
@@ -66,10 +66,7 @@ abstract class FormattedEditor[A,F](
       c     ← createComponent
       m     ← liftIO (Formats.now map register)
       _     ← m get name cata (
-                p ⇒ p.formats find (f matches (_, value)) cata (
-                  dispF (_, c),
-                  dispBase (p, c)
-                ),
+                f.format(_, value) fold (dispBase(c), dispF(c)),
                 notFound(c)
               )
        _    ← point (c.peer.setBounds(r))

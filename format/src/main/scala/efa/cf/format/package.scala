@@ -9,12 +9,63 @@ import shapeless.{HNil, ::}
 
 package object format {
 
+  /**
+    * Type alias for the root of all AllFormats-related paths
+    */
+  type AfRoot = AllFormats :: HNil
+
+  /**
+    * Bundled formats for a single Boolean property
+    */
   type BooleanBase = BaseFormat[BooleanFormat]
+
+  /**
+    * Bundled formats for a single Double property
+    */
   type DoubleBase = BaseFormat[DoubleFormat]
+
   type Colors = IndexedSeq[Color]
-  type FpBluePrint = FormatProps :: Boolean :: AllFormats :: HNil
-  type GcBluePrint = GradientColors :: Boolean :: AllFormats :: HNil
+
+  /**
+    * Complete path to an instance of FormatProps
+    *
+    * The Boolean flag in the path tells us, whether this
+    * is an existing FormatProps or a new instance. This
+    * information is needed for name validation
+    */
+  type FpPath = FormatProps :: Boolean :: AfRoot
+
+  /**
+    * Path to an instance of BaseFormat
+    */
+  type BasePath[A] = BaseFormat[A] :: AfRoot
+
+  /**
+    * Complete path to an single format instance
+    *
+    * The Boolean flag in the path tells us, whether this
+    * is an existing or a new instance. This
+    * information is needed for name validation
+    */
+  type FullFormat[A] = A :: Boolean :: BasePath[A]
+
+  /**
+    * Complete path to an instance of GradientColors
+    *
+    * The Boolean flag in the path tells us, whether this
+    * is an existing FormatProps or a new instance. This
+    * information is needed for name validation
+    */
+  type GcPath = GradientColors :: Boolean :: AfRoot
+
+  /**
+    * Bundled formats for a single String property
+    */
   type StringBase = BaseFormat[StringFormat]
+
+  /**
+    * A Map with String keys
+    */
   type StringMap[+A] = Map[String,A]
 
   lazy val loc = Service.unique[FormatLocal](FormatLocal)
@@ -61,20 +112,6 @@ package object format {
     )
 
   private[format] implicit val ColorsToXml: ToXml[Colors] = ToXml.readShow
-
-  private[format] def formatted[A](l: A @> FormatProps)(i: A ⇒ String)
-  : Formatted[A] = new Formatted[A] {
-    def id (a: A) = i(a)
-    def formatPropsL = l
-  }
-
-  private[format] def propsName[A](f: A ⇒ FormatProps)(i: A ⇒ String)
-  : HasFormatProps[A] = new HasFormatProps[A] {
-    def formatProps (a: A) = f(a)
-    def id (a: A) = i(a)
-  }
-
-  def id[A:StringId](a: A): String = StringId[A] id a
 
   implicit def mapArb[A:Arbitrary:StringId]: Arbitrary[StringMap[A]] = 
     Arbitrary(

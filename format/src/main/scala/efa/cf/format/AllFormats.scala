@@ -22,25 +22,19 @@ case class AllFormats (
 ) {
   import AllFormats._
 
-  lazy val fpBluePrints: List[FpBluePrint] =
-    Efa.mapValues(bluePrintsM)
-       .sortBy { _.name }
-       .map { _ :: false :: this :: HNil }
+  lazy val fpBluePrints: List[FpPath] =
+    mapValues(bluePrintsM) sortBy { _.name } map bluePrintPath(false)
 
-  lazy val gradientColors = Efa mapValues gradientColorsM sortBy { _.name }
+  lazy val gcBluePrints: List[GcPath] =
+    mapValues(gradientColorsM) sortBy { _.name } map bluePrintPath(false)
 
-  def colorNames = gradientColors map (_.name)
+  lazy val gcBluePrint: GcPath = GradientColors.bluePrint :: true :: afRoot
 
-  lazy val gcBluePrints: List[GcBluePrint] =
-    Efa.mapValues(gradientColorsM)
-       .sortBy { _.name }
-       .map { _ :: false :: this :: HNil }
+  lazy val fpBluePrint: FpPath = FormatProps.bluePrint :: false :: afRoot
 
-  lazy val gcBluePrint: GcBluePrint =
-    GradientColors.bluePrint :: true :: this :: HNil
+  private lazy val afRoot = this :: HNil
 
-  lazy val fpBluePrint: FpBluePrint =
-    FormatProps.bluePrint :: false :: this :: HNil
+  private def bluePrintPath[A](isNew: Boolean)(a: A) = a :: isNew :: afRoot
 }
 
 object AllFormats {
@@ -62,33 +56,33 @@ object AllFormats {
     def gradientColorsM = l andThen AfLens.at(_4)
     def stringsM = l andThen AfLens.at(_5)
 
-    def delBluePrint (f: FullFormat[FormatProps]) =
-      bluePrintsM -= f.format.name void
+    //def delBluePrint (f: FullFormat[FormatProps]) =
+    //  bluePrintsM -= f.head.name void
 
-    def addBluePrint (f: FormatProps) = bluePrintsM += (f.name → f) void
+    //def addBluePrint (f: FormatProps) = bluePrintsM += (f.name → f) void
 
-    def updateBluePrint (ff: FullFormat[FormatProps], f: FormatProps) =
-      delBluePrint(ff) >> addBluePrint(f)
+    //def updateBluePrint (ff: FullFormat[FormatProps], f: FormatProps) =
+    //  delBluePrint(ff) >> addBluePrint(f)
 
-    def delGCs (n: String) = gradientColorsM -= n void
+    //def delGCs (n: String) = gradientColorsM -= n void
 
-    def addGCs (f: GradientColors) = gradientColorsM += (f.name → f) void
+    //def addGCs (f: GradientColors) = gradientColorsM += (f.name → f) void
 
-    def modGCs (n: String, f: GradientColors ⇒ GradientColors) = for {
-      a   ← init[A]
-      ogc = gradientColorsM get a get n
-      _   ← delGCs(n)
-      _   ← ogc.fold(init[A].void)(f andThen addGCs)
-    } yield ()
+    //def modGCs (n: String, f: GradientColors ⇒ GradientColors) = for {
+    //  a   ← init[A]
+    //  ogc = gradientColorsM get a get n
+    //  _   ← delGCs(n)
+    //  _   ← ogc.fold(init[A].void)(f andThen addGCs)
+    //} yield ()
 
-    def updateGCs (ff: FullFormat[GradientColors], f: GradientColors) =
-      modGCs (ff.format.name, _ ⇒ f)
+    //def updateGCs (ff: FullFormat[GradientColors], f: GradientColors) =
+    //  modGCs (ff.head.name, _ ⇒ f)
 
-    def delColor (n: String, i: Int) =
-      modGCs(n, GradientColors.colors mod (_.patch (i, Nil, 1), _))
+    //def delColor (n: String, i: Int) =
+    //  modGCs(n, GradientColors.colors mod (_.patch (i, Nil, 1), _))
 
-    def addColor (n: String, c: Color) =
-      modGCs(n, GradientColors.colors mod (_ :+ c, _))
+    //def addColor (n: String, c: Color) =
+    //  modGCs(n, GradientColors.colors mod (_ :+ c, _))
   }
 
   def registerBoolean (l: Localization)(a: AllFormats): AllFormats =
@@ -103,9 +97,9 @@ object AllFormats {
   def addGradient (g: Gradient)(a: AllFormats): AllFormats =
     (L[AllFormats].gradientsM += (g.name → g)) exec a
 
-  private def tryRegister[A:Default:StringIdL:Formatted] (
-    lens: AllFormats @> Map[String,A], loc: Localization
-  )(a: AllFormats): AllFormats = {
+  private def tryRegister[A:Default:StringIdL:Formatted]
+      (lens: AllFormats @> Map[String,A], loc: Localization)
+      (a: AllFormats): AllFormats = {
     val id = loc.name
     def newA = 
       ((StringIdL[A].idL := id) >>

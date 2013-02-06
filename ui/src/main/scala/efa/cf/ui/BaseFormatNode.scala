@@ -2,8 +2,7 @@ package efa.cf.ui
 
 import efa.core.{UniqueId, ValSt, Default}
 import efa.cf.format._
-import efa.cf.format.{AllFormats ⇒ AF, BaseFormat ⇒ BF,
-                      FullBase ⇒ FB, FullFormat ⇒ FF}
+import efa.cf.format.{AllFormats ⇒ AF, BaseFormat ⇒ BF, FullFormat ⇒ FF}
 import efa.nb.dialog.DialogEditable
 import efa.nb.node.{NbNodeFunctions, NodeOut, NbChildrenFunctions}
 import scalaz._, Scalaz._

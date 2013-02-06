@@ -96,7 +96,7 @@ object UtilBuild extends Build {
     "cf",
     file("."),
     settings = buildSettings
-  ) aggregate (editors, format) //, ui)
+  ) aggregate (editors, format, ui)
   
   lazy val editors = Project (
     "cf-editors",

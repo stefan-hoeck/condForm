@@ -7,23 +7,22 @@ import scala.xml.Node
 import scala.swing.Label
 import scalaz._, Scalaz._, scalacheck.ScalaCheckBinding._
 
+/**
+ * A collection of foramts for a given property.
+ *
+ * @param id: The (unique) name of the property
+ * @param props: FormatProps used to format a value if no matchich
+ *               format is found in @param formats
+ * @param formats: Among these a format is chosen when formatting a value
+ * @param fString: Used to format properties that are displayed as Strings
+                   Again, this is only needed, if no suitable format is found
+                   in formats for a given value
+ */
 case class BaseFormat[A] (
-  id: String, props: FormatProps, formats: List[A], fString: String
-) {
-  def names (implicit N:Formatted[A]): Set[String] =
-    formats map N.name toSet
-
-  def fullList (implicit N:Formatted[A]): List[FullFormat[A]] =
-    fullFormats(formats, false)
-
-  def fullFormats (as: List[A], isNew: Boolean)
-  (implicit N:Formatted[A]): List[FullFormat[A]] = {
-    val ns = names
-
-    as sortBy N.name map (FullFormat(id, _, ns, isNew))
-  }
-   
-}
+    id: String,
+    props: FormatProps,
+    formats: List[A],
+    fString: String)
 
 object BaseFormat {
 
@@ -34,7 +33,8 @@ object BaseFormat {
     BaseFormat[DoubleFormat](loc.base, !!!, Nil, "%.3f"))
 
   implicit def BaseFormatFormatted[A] = 
-    new Formatted[BaseFormat[A]] with UniqueIdL[BaseFormat[A],String] {
+    new Formatted[BaseFormat[A]]
+    with UniqueIdL[BaseFormat[A],String] {
       def formatPropsL = BaseFormat.props[A]
       def idL = BaseFormat.id[A]
     }
