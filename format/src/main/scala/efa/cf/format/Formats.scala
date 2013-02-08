@@ -120,7 +120,7 @@ object Formats {
     val i = p.getInt(countLbl(label), -1)
 
     if (i < 0) default.success
-    else (0 until i).toList traverse load map StringId[A].idMap
+    else (0 until i).toList traverse load map StringId[A].idMap[List]
   }
 
   private[this] def countLbl(l: String) = s"$l $Version Count"

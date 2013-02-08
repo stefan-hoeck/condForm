@@ -13,8 +13,8 @@ case class BooleanFormat (props: FormatProps, value: Boolean) {
 
 object BooleanFormat {
   implicit val BfIso = Iso.hlist(BooleanFormat.apply _, BooleanFormat.unapply _)
-  implicit val BfEqual: Equal[BooleanFormat] = Shapeless.ccEqual
-  implicit val BfArb: Arbitrary[BooleanFormat] = Shapeless.ccArbitrary
+  implicit val BfEqual: Equal[BooleanFormat] = ccEqual
+  implicit val BfArb: Arbitrary[BooleanFormat] = ccArbitrary
   implicit val BfDefault = Default default BooleanFormat(!!!, true)
 
   implicit lazy val BooleanFormatFormatted =

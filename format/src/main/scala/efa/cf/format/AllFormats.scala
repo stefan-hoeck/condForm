@@ -39,8 +39,8 @@ case class AllFormats (
 
 object AllFormats {
   implicit val AfIso = Iso.hlist(AllFormats.apply _, AllFormats.unapply _)
-  implicit val AfEqual: Equal[AllFormats] = Shapeless.ccEqual
-  implicit val AfArb: Arbitrary[AllFormats] = Shapeless.ccArbitrary
+  implicit val AfEqual: Equal[AllFormats] = ccEqual
+  implicit val AfArb: Arbitrary[AllFormats] = ccArbitrary
   private val AfLens = SLens[AllFormats]
 
   private def e[A,B]: Map[A,B] = Map.empty
