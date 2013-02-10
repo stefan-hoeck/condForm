@@ -1,7 +1,8 @@
 package efa.cf
 
-import efa.core.{Service, ValSt}
-import efa.nb.dialog.DialogEditable
+import efa.core.{Service, ValSt, Efa}, Efa._
+import efa.nb.dialog.{DialogEditable ⇒ DE}
+import efa.nb.node.NodeOut
 import efa.cf.format._
 import efa.cf.ui.spi.UiLocal
 import java.awt.Color
@@ -11,22 +12,17 @@ import scalaz.effect.IO
 package object ui {
   lazy val loc = Service.unique[UiLocal](UiLocal)
 
-//  type FFEditable[A] = DialogEditable[FullFormat[A],A]
+  type AfOut[A] = NodeOut[A,ValSt[AllFormats]]
 
-//  implicit val FormatPropsEditable: FFEditable[FormatProps] =
-//    DialogEditable.io(FPPanel.formatPropsP)(_.in)
-//
-//  implicit val BooleanFormatEditable: FFEditable[BooleanFormat] =
-//    DialogEditable.io(FPPanel.booleanP)(_.in)
-//
-//  implicit val DoubleFormatEditable: FFEditable[DoubleFormat] =
-//    DialogEditable.io(FPPanel.doubleP)(_.in)
-//
-//  implicit val GradientColorsEditable: FFEditable[GradientColors] =
-//    DialogEditable.io(GradientColorsPanel.create)(_.in)
-//
-//  implicit def FullBaseEditable[A] =
-//    DialogEditable.io(BaseFormatPanel.create[A])(_.in)
+  implicit val FormatPropsEditable = DE.io(FPPanel.formatPropsP)(_.in)
+
+  implicit val BooleanFormatEditable = DE.io(FPPanel.booleanP)(_.in)
+
+  implicit val DoubleFormatEditable = DE.io(FPPanel.doubleP)(_.in)
+
+  implicit val GradientColorsEditable = DE.io(GradientColorsPanel.create)(_.in)
+
+  implicit def BasePathEditable[A] = DE.io1(BaseFormatPanel.create[A])(_.in)
 
   private[ui] def pickColor (c: Color): IO[Color] =
     IO(ColorPicker.showDialog(null, c, true))

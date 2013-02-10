@@ -18,8 +18,7 @@ object FormatProps {
   implicit lazy val FormatPropsDefault: Default[FormatProps] =
     Default default default
 
-  implicit lazy val FormatPropsEqual: Equal[FormatProps] = Equal.equalBy(
-    f ⇒ (f.foreground, f.background, f.name))
+  implicit lazy val FormatPropsEqual = Equal.equalA[FormatProps]
 
   implicit lazy val FormatPropsArbitrary = Arbitrary(
     arbitrary[Color] ⊛ 

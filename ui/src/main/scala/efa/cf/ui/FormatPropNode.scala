@@ -6,21 +6,21 @@ import efa.nb.node.{NbNodeFunctions, NodeOut, NbChildrenFunctions}
 import scalaz._, Scalaz._, effect._
 
 object FormatPropNode extends NbNodeFunctions with NbChildrenFunctions {
-//
-//  lazy val rootOut: NodeOut[AllFormats,ValSt[AllFormats]] =
-//    (children(uniqueIdF(fpOut)) ∙ ((_: AllFormats).bluePrintsFF)) ⊹
-//    clearNt ⊹ 
-//    (addNtDialogEs(l.addBluePrint) ∙ (_.fpBluePrint)) ⊹
-//    nameA(loc.bluePrints) ⊹
-//    contextRootsA(List("ContextActions/BluePrintsNode")) ⊹
-//    iconBaseA("efa/cf/ui/format.png")
 
-  lazy val fpOut: NodeOut[FpPath,ValSt[AllFormats]] =
-//    destroyEs(l.delBluePrint) ⊹ 
-    named[FpPath] ⊹
+  lazy val rootOut: AfOut[AfRoot] =
+    children(parentNamedF(fpOut)) ⊹
+    clearNt ⊹
+    addNtDialogP {_ ⇒ FormatProps.bluePrint} ⊹
+    nameA(loc.bluePrints) ⊹
+    contextRootsA(List("ContextActions/BluePrintsNode")) ⊹
+    iconBaseA("efa/cf/ui/format.png")
+
+  lazy val fpOut: AfOut[FpPath] =
+    (named[FpPath]: AfOut[FpPath]) ⊹
+    destroyP ⊹ 
     contextRootsA(List("ContextActions/SingleFormatNode")) ⊹
     iconBaseA("efa/cf/ui/format.png") ⊹
-//    (editDialog[FFF,FormatProps] withIn (l.updateBluePrint(_,_).success)) ⊹
+    editDialogP ⊹
     ColorEditor.colorA(_.head.background)
 }
 

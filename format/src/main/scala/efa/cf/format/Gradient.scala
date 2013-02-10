@@ -17,10 +17,10 @@ case class Gradient (
     case x => "%." + x + "f"
   }
   
-  def colorFor (d: Double, af: AllFormats): Color = {
+  def colorFor(d: Double, af: AllFormats): Color = {
     val gcs = af.gradientColorsM getOrElse (colors, GradientColors.default)
 
-    cFor (d, gcs.colors, lower, upper)
+    cFor (d, gcs.colorsIs, lower, upper)
   }
 }
 

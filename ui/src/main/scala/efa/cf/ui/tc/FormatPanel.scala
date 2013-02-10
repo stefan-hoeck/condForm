@@ -20,7 +20,7 @@ object FormatPanel extends StateTransFunctions {
   } yield new FormatPanel(n)
 
   def in (p: FormatPanel): SIn[ValRes[AllFormats]] =
-    basicIn (BaseFormatNode.allOut set p.rootNode)(Formats.now) ∘ (_.success)
+    basicIn(BaseFormatNode.allOut set p.rootNode)(Formats.now) ∘ (_.success)
 
 }
 

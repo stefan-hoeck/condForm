@@ -13,7 +13,7 @@ abstract class FormattedEditor[A,F](
     val value: A,
     description: String)(
     implicit f: Formatter[A,F],
-    h: HasFormatProps[F]) 
+    h: Formatted[F]) 
   extends PropertyEditorSupport
   with ValLogIOFunctions {
 

@@ -42,11 +42,11 @@ object Formats {
 
   def addGradient(g: Gradient): IO[Unit] = logValZ (
     trace("Adding gradient: " + g.toString) >>
-    liftIO(mod(L[AllFormats].gradientsM mod (_ + (g.name → g), _)))
+    liftIO(mod(AllFormats addGradient g))
   )
 
   def removeGradient(g: Gradient): IO[Unit] = 
-    mod(L[AllFormats].gradientsM mod (_ - g.name, _))
+    mod(AllFormats deleteGradient g)
 
   private[format] def loadAll (
     pref: ValLogIO[Preferences] = prefs
