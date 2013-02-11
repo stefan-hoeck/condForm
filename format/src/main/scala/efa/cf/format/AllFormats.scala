@@ -24,6 +24,8 @@ case class AllFormats (
 
   lazy val gcBluePrints: List[GradientColors] =
     mapValues(gradientColorsM) sortBy { _.name }
+
+  lazy val gradientNames: List[String] = gcBluePrints map { _.name }
 }
 
 object AllFormats {

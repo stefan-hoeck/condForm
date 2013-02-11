@@ -8,11 +8,10 @@ import scalaz._, Scalaz._, effect._
 
 object GradientColorsNode extends NbNodeFunctions with NbChildrenFunctions {
 
-  //@TODO add add
   lazy val rootOut: AfOut[AfRoot] =
     (clearNt: AfOut[AfRoot]) ⊹ 
     children(parentNamedF(gcOut)) ⊹
-    //addNtDialogP ⊹
+    addNtDialogP { _ ⇒ GradientColors.bluePrint } ⊹
     nameA(loc.gradients) ⊹
     contextRootsA(List("ContextActions/GradientsNode")) ⊹
     iconBaseA("efa/cf/ui/format.png")

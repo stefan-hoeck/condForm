@@ -6,14 +6,15 @@ import efa.cf.format.{BaseFormat ⇒ BF, FullFormat ⇒ FF}
 import efa.nb.dialog.DialogEditable
 import efa.nb.node.{NbNodeFunctions, NodeOut, NbChildrenFunctions}
 import scalaz._, Scalaz._
+import shapeless.{HNil}
 
 object BaseFormatNode extends NbNodeFunctions with NbChildrenFunctions {
-  lazy val allOut: AfOut[AllFormats] = ??? //children(
-//    singleF(FormatPropNode.rootOut),
-//    singleF(GradientColorsNode.rootOut),
-//    singleF(booleanOut),
-//    singleF(doubleOut)
-//  )
+  lazy val allOut: AfOut[AllFormats] = children(
+    singleF(FormatPropNode.rootOut),
+    singleF(GradientColorsNode.rootOut),
+    singleF(booleanOut),
+    singleF(doubleOut)
+  ) ∙ { _ :: HNil }
 
   lazy val booleanOut: AfOut[AfRoot] =
     baseFormatOut[BooleanFormat](loc.booleanFormats)

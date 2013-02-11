@@ -18,7 +18,10 @@ case class Gradient (
   }
   
   def colorFor(d: Double, af: AllFormats): Color = {
-    val gcs = af.gradientColorsM getOrElse (colors, GradientColors.default)
+    val gcs = af.gradientColorsM get colors cata (
+      gc ⇒ (gc.colors.isEmpty) ? GradientColors.default | gc,
+      GradientColors.default
+    )
 
     cFor (d, gcs.colorsIs, lower, upper)
   }
@@ -27,7 +30,8 @@ case class Gradient (
 object Gradient {
   
   private def cFor (d: Double, cs: IndexedSeq[Color], l: Double, u: Double)
-  : Color = d match {
+  : Color = 
+    d match {
       case _ if (u < l) ⇒ cFor (d, cs.reverse, u, l)
       case x if (x < l) ⇒ cs.head
       case x if (x > u) ⇒ cs.last

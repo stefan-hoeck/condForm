@@ -13,7 +13,7 @@ case class GradientColors (name: String, colors: Colors) {
 object GradientColors {
   lazy val default = GradientColors(loc.default, defaultColors)
 
-  lazy val bluePrint = GradientColors(loc.gradient, defaultColors)
+  lazy val bluePrint = GradientColors(loc.gradient, Nil)
 
   implicit lazy val FormatPropsDefault: Default[GradientColors] =
     Default default default
