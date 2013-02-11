@@ -1,12 +1,12 @@
 package efa.cf.ui
 
-//import efa.core.ValSt
-//import efa.cf.format._, efa.cf.format.{loc ⇒ fLoc}
-//import efa.nb.node.{NbNodeFunctions, NodeOut, NbChildrenFunctions}
-//import java.awt.Color
-//import scalaz._, Scalaz._, effect._
-//
-//object GradientColorsNode extends NbNodeFunctions with NbChildrenFunctions {
+import efa.core.ValSt
+import efa.cf.format._, efa.cf.format.{loc ⇒ fLoc}
+import efa.nb.node.{NbNodeFunctions, NodeOut, NbChildrenFunctions}
+import java.awt.Color
+import scalaz._, Scalaz._, effect._
+
+object GradientColorsNode extends NbNodeFunctions with NbChildrenFunctions {
 //  type FFG = FullFormat[GradientColors]
 //  type CSI = (Color,String,Int)
 //
@@ -30,24 +30,11 @@ package efa.cf.ui
 //    clearNt ⊹
 //    addColor
 //
-//  lazy val colorOut: NodeOut[CSI,ValSt[AllFormats]] =
-//    destroyEs{ t: CSI ⇒ l delColor (t._2, t._3) } ⊹ 
-//    ColorEditor.colorA[(Color,String,Int)](_._1) ⊹
-//    contextRootsA(List("ContextActions/SingleColorNode")) ⊹
-//    iconBaseA("efa/cf/ui/format.png")
-//
-//  private def colorNameIdx (f: FFG): List[CSI] =
-//    f.format.colors
-//     .zipWithIndex
-//     .map {case (c,i) ⇒ (c,f.format.name,i)}
-//     .toList
-//
-//  private lazy val addColor: NodeOut[FFG,ValSt[AllFormats]] = {
-//    def addFFG: NodeOut[FFG,FFG] = addNt[FFG] ∙ ((_,fLoc.color))
-//
-//     addFFG mapIO (f ⇒
-//       pickColorWhite map (l addColor (f.format.name, _) success))
-//  }
-//}
+  lazy val colorOut: AfOut[FullColor] =
+    (destroyP: AfOut[FullColor]) ⊹ 
+    ColorEditor.colorA[FullColor](_.head._2) ⊹
+    contextRootsA(List("ContextActions/SingleColorNode")) ⊹
+    iconBaseA("efa/cf/ui/format.png")
+}
 
 // vim: set ts=2 sw=2 et:

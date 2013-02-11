@@ -37,7 +37,7 @@ object Dependencies {
   import BuildSettings.sv
 
   val utilVersion = "0.2.0-SNAPSHOT"
-  val reactVersion = "0.1.0"
+  val reactVersion = "0.2.0-SNAPSHOT"
   val util = "efa"
   val react = "efa.react"
 
@@ -47,8 +47,9 @@ object Dependencies {
 
   val efaNb = util %% "efa-nb" % utilVersion changing
 
-  val efaReact = react %% "react-core" % reactVersion
-  val efaReactSwing = react %% "react-swing" % reactVersion
+  val efaReact = react %% "react-core" % reactVersion changing
+
+  val efaReactSwing = react %% "react-swing" % reactVersion changing
 
   val nbV = "RELEASE71"
 

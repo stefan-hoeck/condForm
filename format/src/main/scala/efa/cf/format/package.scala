@@ -32,6 +32,8 @@ package object format {
   /** Complete path to an single format instance */
   type FullFormat[A] = A :: BasePath[A]
 
+  type FullColor = IdColor :: GcPath
+
   /** Complete path to an instance of GradientColors */
   type GcPath = GradientColors :: AfRoot
 
