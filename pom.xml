@@ -71,7 +71,7 @@
       <dependency>
         <groupId>efa</groupId>
         <artifactId>efa-nb</artifactId>
-        <version>0.1.2</version>
+        <version>${util.version}</version>
       </dependency>
       <dependency>
         <groupId>org.efa</groupId>
@@ -101,11 +101,11 @@
   </modules>
 
   <properties>
-    <util.version>0.1.0</util.version>
-    <react.version>0.1.0</react.version>
-    <format.version>2.0.0</format.version>
-    <editors.version>2.0.0</editors.version>
-    <ui.version>2.0.0</ui.version>
+    <util.version>0.2.0-SNAPSHOT</util.version>
+    <react.version>0.2.0-SNAPSHOT</react.version>
+    <format.version>2.1.0-SNAPSHOT</format.version>
+    <editors.version>2.1.0-SNAPSHOT</editors.version>
+    <ui.version>2.1.0-SNAPSHOT</ui.version>
   </properties>
 </project>
 
