@@ -35,15 +35,7 @@ package object ui {
 
   implicit val ColorPanelAsSignal = AsSignal.unit[ColorPicker,Color,PCL](
     (cp, f) ⇒  {
-      val pcl = new PCL {
-        def propertyChange(e: PCE) {
-          e.getPropertyName match {
-            case ColCh ⇒ f(cp.getColor)
-            case OpCh  ⇒ f(cp.getColor)
-            case _     ⇒ ()
-          }
-        }
-      }
+      val pcl = new PCL { def propertyChange(e: PCE) { f(cp.getColor) } }
 
       cp.addPropertyChangeListener(pcl)
 

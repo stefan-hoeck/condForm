@@ -18,7 +18,7 @@ object GradientColorsNode extends NbNodeFunctions with NbChildrenFunctions {
 
   lazy val gcOut: AfOut[GcPath] =
     (named[GcPath]: AfOut[GcPath]) ⊹ 
-    children(parentF(colorOut)) ⊹
+    children(parentSortedF(colorOut)(_.head._1 < _.head._1)) ⊹
     destroyP ⊹
     editDialogP ⊹
     contextRootsA(List("ContextActions/SingleGradientNode")) ⊹
@@ -26,8 +26,11 @@ object GradientColorsNode extends NbNodeFunctions with NbChildrenFunctions {
     clearNt ⊹
     createNtDialogP[List,AllFormats,IdColor,GcPath,Int]{_ ⇒ (-1,Color.WHITE)}
 
+  implicit val IdColorEqual: Equal[IdColor] = Equal.equalA
+
   lazy val colorOut: AfOut[FullColor] =
     (destroyP: AfOut[FullColor]) ⊹ 
+    editDialogP ⊹
     ColorEditor.colorA[FullColor](_.head._2) ⊹
     contextRootsA(List("ContextActions/SingleColorNode")) ⊹
     iconBaseA("efa/cf/ui/format.png")
