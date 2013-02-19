@@ -41,7 +41,7 @@ object FormatProps {
   implicit lazy val FormatPropsFormatted =
     new Formatted[FormatProps] with UniqueIdL[FormatProps,String] {
       val idL = FormatProps.name
-      val formatPropsL = Lens.self[FormatProps]
+      val formatPropsL = Lens.lensId[FormatProps]
     }
   
   private lazy val transparent: Color = new Color(0, 0, 0, 0)
