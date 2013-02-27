@@ -17,25 +17,16 @@
 
   <dependencies>
     <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>scalaCheckW</artifactId>
+      <groupId>efa.nb</groupId>
+      <artifactId>efaCoreW</artifactId>
     </dependency>
     <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>scalaSwingW</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>efa</groupId>
-      <artifactId>efa-core</artifactId>
+      <groupId>efa.nb</groupId>
+      <artifactId>efaIoW</artifactId>
     </dependency>
     <dependency>
-      <groupId>efa</groupId>
-      <artifactId>efa-io</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>efa.react</groupId>
-      <artifactId>react-core</artifactId>
+      <groupId>efa.nb</groupId>
+      <artifactId>reactW</artifactId>
     </dependency>
 
     <dependency>
