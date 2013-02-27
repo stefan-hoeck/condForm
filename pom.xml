@@ -103,9 +103,9 @@
   <properties>
     <util.version>0.1.0</util.version>
     <react.version>0.1.0</react.version>
-    <format.version>2.0.0</format.version>
-    <editors.version>2.0.0</editors.version>
-    <ui.version>2.0.0</ui.version>
+    <format.version>2.0.1</format.version>
+    <editors.version>2.0.2</editors.version>
+    <ui.version>2.0.2</ui.version>
   </properties>
 </project>
 
