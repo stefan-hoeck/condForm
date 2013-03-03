@@ -1,7 +1,7 @@
 package efa.cf.format
 
 import efa.core._, Efa._
-import efa.io._, valLogIO._
+import efa.io._, logDisIO._
 import efa.react.{Var, Signal, sTrans, SIn}
 import java.util.prefs.Preferences
 import org.openide.util.NbPreferences
@@ -40,7 +40,7 @@ object Formats {
   def registerString(l: Localization): IO[Unit] = 
     mod(AllFormats registerString l)
 
-  def addGradient(g: Gradient): IO[Unit] = logValZ (
+  def addGradient(g: Gradient): IO[Unit] = logDisZ (
     trace("Adding gradient: " + g.toString) >>
     liftIO(mod(AllFormats addGradient g))
   )
@@ -49,8 +49,8 @@ object Formats {
     mod(AllFormats deleteGradient g)
 
   private[format] def loadAll (
-    pref: ValLogIO[Preferences] = prefs
-  ): IO[AllFormats] = logValD (
+    pref: LogDisIO[Preferences] = prefs
+  ): IO[AllFormats] = logDisD (
     ^^^^^(load[FormatProps](formatProps, pref, FormatProps.defaults),
       load[BooleanBase](booleanBase, pref),
       load[DoubleBase](doubleBase, pref),
@@ -62,21 +62,21 @@ object Formats {
 
   private[format] def load[A:ToXml:StringId](
     label: String, 
-    pref: ValLogIO[Preferences] = prefs,
+    pref: LogDisIO[Preferences] = prefs,
     default: Map[String,A] = Map.empty[String,A]
-  ): ValLogIO[Map[String, A]] = for {
+  ): LogDisIO[Map[String, A]] = for {
       _     ← info("Loading formattings for " + label)
       ps    ← pref
       p     ← liftDis (fromPrefs[A](label, ps, default).disjunction)
     } yield p
 
   private[format] def store(
-    pref: ValLogIO[Preferences] = prefs
+    pref: LogDisIO[Preferences] = prefs
   ): IO[Unit] = now >>= (storeAll(_, pref))
 
   private[format] def storeAll(
     af: AllFormats,
-    pref: ValLogIO[Preferences] = prefs
+    pref: LogDisIO[Preferences] = prefs
   ): IO[Unit] = for {
     _  ← storeMap(formatProps, pref, af.bluePrintsM)
     _  ← storeMap(booleanBase, pref, af.boolsM)
@@ -87,8 +87,8 @@ object Formats {
   } yield ()
 
   private[format] def storeMap[A:ToXml](
-    label: String, pref: ValLogIO[Preferences], m: Map[String,A]
-  ): IO[Unit] = logValZ (
+    label: String, pref: LogDisIO[Preferences], m: Map[String,A]
+  ): IO[Unit] = logDisZ (
     for {
       _  ← info("Persisting formattings for " + label)
       ps ← pref
@@ -96,7 +96,7 @@ object Formats {
     } yield ()
   )
 
-  private[format] lazy val prefs: ValLogIO[Preferences] =
+  private[format] lazy val prefs: LogDisIO[Preferences] =
     point(NbPreferences.forModule(BaseFormat.getClass))
 
   private[this] def toPrefs[A:ToXml] (
@@ -128,11 +128,11 @@ object Formats {
   private[this] def itemLbl(l: String, i: Int) =
    s"$l $Version Item $i"
 
-  private[this] def logValZ[A:Monoid](io: ValLogIO[A]): IO[A] =
-    pref.cfLogger >>= (_ logValZ io)
+  private[this] def logDisZ[A:Monoid](io: LogDisIO[A]): IO[A] =
+    pref.cfLogger >>= (_ logDisZ io)
 
-  private[this] def logValD[A:Default](io: ValLogIO[A]): IO[A] =
-    pref.cfLogger >>= (_ logValD io)
+  private[this] def logDisD[A:Default](io: LogDisIO[A]): IO[A] =
+    pref.cfLogger >>= (_ logDisD io)
 }
 
 // vim: set ts=2 sw=2 et:

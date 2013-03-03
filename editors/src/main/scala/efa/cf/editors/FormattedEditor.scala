@@ -1,7 +1,7 @@
 package efa.cf.editors
 
 import efa.cf.format._
-import efa.io.{ValLogIO, ValLogIOFunctions, LoggerIO}
+import efa.io.{LogDisIO, LogDisIOFunctions, LoggerIO}
 import efa.react.Events
 import java.awt.{Rectangle, Graphics}
 import java.beans.PropertyEditorSupport
@@ -15,21 +15,21 @@ abstract class FormattedEditor[A,F](
     implicit f: Formatter[A,F],
     h: Formatted[F]) 
   extends PropertyEditorSupport
-  with ValLogIOFunctions {
+  with LogDisIOFunctions {
 
   type Comp <: Component
   type BF = BaseFormat[F]
   
   protected def register (f: AllFormats): Map[String,BF]
 
-  protected def createComponent: ValLogIO[Comp]
+  protected def createComponent: LogDisIO[Comp]
 
-  protected def displayUnformatted(comp: Comp): ValLogIO[Unit]
+  protected def displayUnformatted(comp: Comp): LogDisIO[Unit]
 
   protected def displayBaseFormatted(format: BF, comp: Comp)
-    : ValLogIO[Unit]
+    : LogDisIO[Unit]
 
-  protected def displayFormatted(format: F, comp: Comp): ValLogIO[Unit]
+  protected def displayFormatted(format: F, comp: Comp): LogDisIO[Unit]
 
   override protected def getAsText =
     if (description.isEmpty) null else description
@@ -37,11 +37,11 @@ abstract class FormattedEditor[A,F](
   override def isPaintable = true
 
   override def paintValue(g: Graphics, r: Rectangle) {
-    pref.cfLogger >>= (_ logValZ doPaint(g, r)) unsafePerformIO
+    pref.cfLogger >>= (_ logDisZ doPaint(g, r)) unsafePerformIO
   }
    
   final private[editors] def doPaint(g: Graphics, r: Rectangle)
-  : ValLogIO[Unit] = {
+  : LogDisIO[Unit] = {
     def notFound (c: Comp) = for {
       _ ← warning("No base format found for property " + name)
       _ ← displayUnformatted(c)

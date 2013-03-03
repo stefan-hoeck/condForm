@@ -2,7 +2,7 @@ package efa.cf.editors
 
 import efa.core.Localization
 import efa.cf.format._
-import efa.io.ValLogIO
+import efa.io.LogDisIO
 import java.awt.{Rectangle, Graphics}
 import scala.swing.{Label, Alignment}
 import scalaz._, Scalaz._
@@ -28,10 +28,10 @@ private[editors] class DoubleEditor(name: String, v: Double, desc: String)
     point(c.text = f.fString format v)
 
   override def paintValue(g: Graphics, r: Rectangle) {
-    pref.cfLogger >>= (_ logValZ doPaintG(g, r)) unsafePerformIO
+    pref.cfLogger >>= (_ logDisZ doPaintG(g, r)) unsafePerformIO
   }
 
-  private def doPaintG (g: Graphics, r: Rectangle): ValLogIO[Unit] = for {
+  private def doPaintG (g: Graphics, r: Rectangle): LogDisIO[Unit] = for {
     _     ← trace("Searching gradient for property " + name)
     af    ← liftIO(Formats.now)
     og    = af.gradientsM get name
