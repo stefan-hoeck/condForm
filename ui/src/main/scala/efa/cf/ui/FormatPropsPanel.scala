@@ -2,28 +2,41 @@ package efa.cf.ui
 
 import efa.cf.format._, efa.cf.format.{FullFormat ⇒ FF}
 import efa.cf.format.logic.Term
-import efa.core.{Efa, Validators, loc ⇒ cLoc}, Efa._
+import efa.core.{Efa, Validators, loc ⇒ cLoc, Named}, Efa._
 import efa.nb.VSIn
 import efa.nb.dialog.DialogPanel
 import scalaz._, Scalaz._, effect.IO
 
-abstract class FPPanel[A:Formatted] (ff: FF[A]) extends DialogPanel {
-  protected def a: A = ff.format
+abstract class FPPanel[A:Formatted](
+    val a: A,
+    names: Set[String],
+    isCreate: Boolean)
+  extends DialogPanel {
 
-  val nameC = textField(Formatted[A] locName a)
+  val nameC = textField(aName)
   val fore = new ColorPanel(Formatted[A] foreground a)
   val back = new ColorPanel(Formatted[A] background a)
-
-  def in: VSIn[A]
 
   lazy val fpIn: VSIn[FormatProps] = ^^(
     fore.colorIn,
     back.colorIn,
-    stringIn(nameC, Validators uniqueString (ff.invalidNames, cLoc.name))
+    stringIn(nameC, Validators uniqueString (invalidNames, cLoc.name))
   )(FormatProps.apply)
+
+  def in: VSIn[A]
+
+  private def invalidNames = isCreate ? names | (names - aName)
+  private def aName = Formatted[A] name a
 }
 
-class FormatPropsPanel (ff: FF[FormatProps]) extends FPPanel(ff) {
+abstract class FFPanel[A:Formatted](ff: FF[A], ic: Boolean)
+  extends FPPanel[A](
+    ff.head,
+    ff.tail.head.formats map Named[A].name toSet,
+    ic)
+
+class FormatPropsPanel (fp: FpPath, isCreate: Boolean)
+    extends FPPanel(fp.head, fp.last.bluePrintsM.keySet, isCreate) {
   lazy val in = fpIn
     
   (efa.core.loc.name beside nameC) above
@@ -33,7 +46,7 @@ class FormatPropsPanel (ff: FF[FormatProps]) extends FPPanel(ff) {
   setWidth(400)
 }
 
-class BooleanFP (ff: FF[BooleanFormat]) extends FPPanel(ff) {
+class BooleanFP (ff: FF[BooleanFormat], ic: Boolean) extends FFPanel(ff, ic) {
   val valueC = comboBox(a.value, List(true, false))
   lazy val in = ^(fpIn, comboBox(valueC))(BooleanFormat.apply)
     
@@ -45,7 +58,7 @@ class BooleanFP (ff: FF[BooleanFormat]) extends FPPanel(ff) {
   setWidth(400)
 }
 
-class DoubleFP (ff: FF[DoubleFormat]) extends FPPanel(ff) {
+class DoubleFP (ff: FF[DoubleFormat], ic: Boolean) extends FFPanel(ff, ic) {
   val termC = textField(a.term.shows)
   val formatC = textField(a.formatString)
   lazy val in = ^^(
@@ -64,12 +77,14 @@ class DoubleFP (ff: FF[DoubleFormat]) extends FPPanel(ff) {
 }
 
 object FPPanel {
-  def formatPropsP (f: FF[FormatProps]): IO[FormatPropsPanel] =
-    IO(new FormatPropsPanel(f))
+  def formatPropsP (f: FpPath, ic: Boolean): IO[FormatPropsPanel] =
+    IO(new FormatPropsPanel(f, ic))
 
-  def booleanP (f: FF[BooleanFormat]): IO[BooleanFP] = IO(new BooleanFP(f))
+  def booleanP (f: FF[BooleanFormat], ic: Boolean): IO[BooleanFP] =
+    IO(new BooleanFP(f, ic))
 
-  def doubleP (f: FF[DoubleFormat]): IO[DoubleFP] = IO(new DoubleFP(f))
+  def doubleP (f: FF[DoubleFormat], ic: Boolean): IO[DoubleFP] =
+    IO(new DoubleFP(f, ic))
 }
 
 // vim: set ts=2 sw=2 et:

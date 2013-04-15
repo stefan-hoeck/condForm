@@ -81,7 +81,7 @@ object GradientPanelTest extends Properties("GradientPanel") {
 
   lazy val pairGen = for {
     af ← Arbitrary.arbitrary[AllFormats]
-    n  ← Gen oneOf (af.colorNames)
+    n  ← Gen oneOf (af.gradientNames)
     g  ← Arbitrary.arbitrary[Gradient]
   } yield (af, g copy (name = n))
 
@@ -106,7 +106,6 @@ object GradientPanelTest extends Properties("GradientPanel") {
         
     res.unsafePerformIO
   }
-
 }
 
 // vim: set ts=2 sw=2 et:

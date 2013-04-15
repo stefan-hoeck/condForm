@@ -17,17 +17,21 @@ case class Gradient (
     case x => "%." + x + "f"
   }
   
-  def colorFor (d: Double, af: AllFormats): Color = {
-    val gcs = af.gradientColorsM getOrElse (colors, GradientColors.default)
+  def colorFor(d: Double, af: AllFormats): Color = {
+    val gcs = af.gradientColorsM get colors cata (
+      gc ⇒ (gc.colors.isEmpty) ? GradientColors.default | gc,
+      GradientColors.default
+    )
 
-    cFor (d, gcs.colors, lower, upper)
+    cFor (d, gcs.colorsIs, lower, upper)
   }
 }
 
 object Gradient {
   
   private def cFor (d: Double, cs: IndexedSeq[Color], l: Double, u: Double)
-  : Color = d match {
+  : Color = 
+    d match {
       case _ if (u < l) ⇒ cFor (d, cs.reverse, u, l)
       case x if (x < l) ⇒ cs.head
       case x if (x > u) ⇒ cs.last
@@ -63,8 +67,8 @@ object Gradient {
   implicit lazy val GradientDefault: Default[Gradient] =
     Default default default
 
-  implicit lazy val GradientUniqueId = new UniqueNamed[Gradient]{
-    val uniqueNameL = Gradient.name
+  implicit lazy val GradientUniqueId = new UniqueIdL[Gradient,String]{
+    val idL = Gradient.name
   }
 
   implicit lazy val GradientEqual: Equal[Gradient] = Equal.equalA

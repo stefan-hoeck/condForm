@@ -5,37 +5,32 @@
   <parent>
     <groupId>efa</groupId>
     <artifactId>cf</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0-SNAPSHOT</version>
   </parent>
 
   <groupId>efa.cf</groupId>
   <artifactId>cf-editors</artifactId>
-  <version>2.0.1</version>
+  <version>2.1.0-SNAPSHOT</version>
   <packaging>nbm</packaging>
 
   <name>editors</name>
 
   <dependencies>
     <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>scalaSwingW</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>efa</groupId>
-      <artifactId>efa-core</artifactId>
+      <groupId>efa.nb</groupId>
+      <artifactId>efaCoreW</artifactId>
     </dependency>
     <dependency>
-      <groupId>efa</groupId>
-      <artifactId>efa-io</artifactId>
+      <groupId>efa.nb</groupId>
+      <artifactId>efaIoW</artifactId>
     </dependency>
     <dependency>
-      <groupId>efa</groupId>
+      <groupId>efa.nb</groupId>
       <artifactId>efa-nb</artifactId>
     </dependency>
     <dependency>
-      <groupId>efa.react</groupId>
-      <artifactId>react-core</artifactId>
+      <groupId>efa.nb</groupId>
+      <artifactId>reactW</artifactId>
     </dependency>
 
     <dependency>

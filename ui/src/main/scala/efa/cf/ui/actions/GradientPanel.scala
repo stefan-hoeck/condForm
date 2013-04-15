@@ -60,7 +60,7 @@ class GradientPanel (
       (Swing.item(cGradient) ∙ (_.colors))
 
     val colorsOut: Out[AllFormats] =
-      Swing model cGradient contramap (_.colorNames)
+      Swing model cGradient contramap (_.gradientNames)
 
     val oOut: Out[OGrad] =
       (Swing.enabled(removeB) ∙ ((_: OGrad).nonEmpty)) ⊹
@@ -86,7 +86,7 @@ object GradientPanel {
   private[actions] def createLkp (l: Lookup) : IO[GradientPanel] = for {
     lrw ← LookupResultWrapper[ColumnInfo](l)
     af  ← Formats.now
-    p   ← IO(new GradientPanel(lrw, af.gradientColors map (_.name)))
+    p   ← IO(new GradientPanel(lrw, af.gradientNames))
     cs  ← p.behavior.go
     _   = p.connectors = cs._1
   } yield p

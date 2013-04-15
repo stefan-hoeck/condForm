@@ -5,10 +5,10 @@ import efa.nb.dialog.DialogPanel
 import efa.cf.format._
 import scalaz._, Scalaz._, effect.IO
 
-class BaseFormatPanel[A] private (val fb: FullBase[A])
-   extends DialogPanel {
+class BaseFormatPanel[A] private(val fb: BasePath[A])
+  extends DialogPanel {
 
-  def bf: BaseFormat[A] = fb.baseFormat
+  def bf: BaseFormat[A] = fb.head
 
   val fore: ColorPanel = new ColorPanel(bf.props.foreground)
   val back: ColorPanel = new ColorPanel(bf.props.background)
@@ -29,7 +29,7 @@ class BaseFormatPanel[A] private (val fb: FullBase[A])
 }
 
 object BaseFormatPanel {
-  def create[A] (f: FullBase[A]): IO[BaseFormatPanel[A]] =
+  def create[A] (f: BasePath[A]): IO[BaseFormatPanel[A]] =
     IO(new BaseFormatPanel(f))
 }
 

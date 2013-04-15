@@ -5,74 +5,94 @@
   <parent>
     <artifactId>nb</artifactId>
     <groupId>efa.mvn</groupId>
-    <version>7.1.2</version>
+    <version>7.1.4</version>
   </parent>
 
   <groupId>efa</groupId>
   <artifactId>cf</artifactId>
-  <version>2.0.0</version>
+  <version>2.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>cf</name>
 
   <dependencies>
     <dependency>
-      <groupId>efa.scala</groupId>
+      <groupId>efa.nb</groupId>
       <artifactId>scalaW</artifactId>
     </dependency>
     <dependency>
-      <groupId>efa.scala</groupId>
+      <groupId>efa.nb</groupId>
+      <artifactId>scalaSwingW</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
       <artifactId>scalazW</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>shapelessW</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>scalaCheckW</artifactId>
     </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>    
       <dependency>
-        <groupId>efa.scala</groupId>
+        <groupId>efa.nb</groupId>
         <artifactId>scalaW</artifactId>
-        <version>2.10.0</version>
+        <version>${scala.version}</version>
       </dependency>
       <dependency>
-        <groupId>efa.scala</groupId>
+        <groupId>efa.nb</groupId>
         <artifactId>scalaSwingW</artifactId>
-        <version>2.10.0</version>
+        <version>${scala.version}</version>
       </dependency>
       <dependency>
-        <groupId>efa.scala</groupId>
+        <groupId>efa.nb</groupId>
         <artifactId>scalazW</artifactId>
-        <version>7.0.0-M7</version>
+        <version>${scalaz.version}</version>
       </dependency>
       <dependency>
-        <groupId>efa.scala</groupId>
+        <groupId>efa.nb</groupId>
+        <artifactId>shapelessW</artifactId>
+        <version>${shapeless.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>efa.nb</groupId>
         <artifactId>scalaCheckW</artifactId>
-        <version>1.10.0</version>
+        <version>${scalacheck.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>efa.react</groupId>
-        <artifactId>react-core</artifactId>
+        <groupId>efa.nb</groupId>
+        <artifactId>reactW</artifactId>
         <version>${react.version}</version>
       </dependency>
       <dependency>
-        <groupId>efa.react</groupId>
-        <artifactId>react-swing</artifactId>
+        <groupId>efa.nb</groupId>
+        <artifactId>reactSwingW</artifactId>
         <version>${react.version}</version>
       </dependency>
+
       <dependency>
-        <groupId>efa</groupId>
-        <artifactId>efa-core</artifactId>
+        <groupId>efa.nb</groupId>
+        <artifactId>efaCoreW</artifactId>
         <version>${util.version}</version>
       </dependency>
       <dependency>
-        <groupId>efa</groupId>
-        <artifactId>efa-io</artifactId>
+        <groupId>efa.nb</groupId>
+        <artifactId>efaIoW</artifactId>
         <version>${util.version}</version>
       </dependency>
+
       <dependency>
-        <groupId>efa</groupId>
+        <groupId>efa.nb</groupId>
         <artifactId>efa-nb</artifactId>
-        <version>0.1.2</version>
+        <version>${nb.version}</version>
       </dependency>
+
       <dependency>
         <groupId>org.efa</groupId>
         <artifactId>ColorChooser</artifactId>
@@ -101,11 +121,16 @@
   </modules>
 
   <properties>
-    <util.version>0.1.0</util.version>
-    <react.version>0.1.0</react.version>
-    <format.version>2.0.1</format.version>
-    <editors.version>2.0.2</editors.version>
-    <ui.version>2.0.2</ui.version>
+    <scala.version>2.10.0</scala.version>
+    <scalaz.version>7.0.0-M8</scalaz.version>
+    <shapeless.version>1.2.3</shapeless.version>
+    <scalacheck.version>1.10.0</scalacheck.version>
+    <util.version>0.2.1-SNAPSHOT</util.version>
+    <react.version>0.2.1-SNAPSHOT</react.version>
+    <nb.version>0.2.1-SNAPSHOT</nb.version>
+    <format.version>2.1.0-SNAPSHOT</format.version>
+    <editors.version>2.1.0-SNAPSHOT</editors.version>
+    <ui.version>2.1.0-SNAPSHOT</ui.version>
   </properties>
 </project>
 
